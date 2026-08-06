@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Preconnect to critical domains for faster DNS resolution -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    <link rel="preconnect" href="https://images.pexels.com" crossorigin />
+    
+    <!-- Load fonts asynchronously to eliminate 900ms render-blocking delay on Mobile -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Inter:wght@400;600;700;900&display=swap" />
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
+    </noscript>
+
+    <title>Insight Daily - Global News, Breaking News & Live Updates</title>
+
+    <!-- Default Open Graph Tags for Social Media Sharing (WhatsApp, Facebook, LinkedIn) -->
+    <meta property="og:title" content="Insight Daily - Reliable & Breaking News" />
+    <meta property="og:description" content="Get the latest breaking news, reliable reporting, and in-depth analysis from across the globe." />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80" />
+    <meta property="og:type" content="website" />
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Insight Daily - Reliable & Breaking News" />
+    <meta name="twitter:description" content="Get the latest breaking news, reliable reporting, and in-depth analysis from across the globe." />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80" />
+
+    <script>
+      // Advance SPA Prefetch: Start API call immediately & preload LCP image before JS parses!
+      window.__INITIAL_DATA_PROMISE__ = fetch('/api/post/getPosts?limit=20')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.posts && data.posts.length > 0) {
+            const firstPost = data.posts[0];
+            if (firstPost.image) {
+              const link = document.createElement('link');
+              link.rel = 'preload';
+              link.as = 'image';
+              link.fetchpriority = 'high';
+              
+              // Prevent preload mismatch: estimate the browser's selected srcSet width
+              const vw = window.innerWidth;
+              const dpr = window.devicePixelRatio || 1;
+              const requiredWidth = vw <= 768 ? vw * dpr : (vw * 0.66) * dpr;
+              
+              let w = 1200;
+              if (requiredWidth <= 320) w = 320;
+              else if (requiredWidth <= 800) w = 800;
+              
+              let optimizedSrc = firstPost.image;
+              
+              if (optimizedSrc.includes('unsplash.com')) {
+                 const url = new URL(optimizedSrc);
+                 url.searchParams.set('w', w);
+                 url.searchParams.set('q', '20');
+                 url.searchParams.set('auto', 'format');
+                 url.searchParams.set('fit', 'crop');
+                 optimizedSrc = url.toString();
+              } else if (optimizedSrc.includes('res.cloudinary.com')) {
+                 const parts = optimizedSrc.split('/upload/');
+                 if (parts.length === 2) {
+                   optimizedSrc = `${parts[0]}/upload/w_${w},q_20,f_webp/${parts[1]}`;
+                 }
+              } else if (optimizedSrc.includes('pexels.com')) {
+                 const url = new URL(optimizedSrc);
+                 url.searchParams.set('w', w);
+                 url.searchParams.set('auto', 'compress');
+                 url.searchParams.set('fm', 'webp');
+                 optimizedSrc = url.toString();
+              }
+              link.href = optimizedSrc;
+              
+              // Fix Forced Reflow: inject link in next frame
+              requestAnimationFrame(() => {
+                document.head.appendChild(link);
+                // GENIUS LCP HACK: Inject the image into the skeleton so it paints before React boots!
+                const heroImg = document.createElement('img');
+                heroImg.src = optimizedSrc;
+                heroImg.className = 'initial-hero-img';
+                const heroContainer = document.querySelector('.initial-hero');
+                if (heroContainer) {
+                  heroContainer.appendChild(heroImg);
+                  // Remove pulse animation once image is injected
+                  heroContainer.style.animation = 'none';
+                }
+              });
+            }
+          }
+          return data.posts;
+        })
+        .catch(err => null);
+    </script>
+  <style>
+    /* Pre-render Skeleton to improve FCP on Mobile */
+    .initial-loader {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background-color: #f8fafc;
+    }
+    .initial-header {
+      height: 72px;
+      background: #ffffff;
+      width: 100%;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+    }
+    .initial-logo {
+      font-family: Arial, sans-serif;
+      font-size: 24px;
+      font-weight: 900;
+      color: #0A2240;
+    }
+    .initial-logo-red {
+      color: #E1261C;
+    }
+    .initial-ticker {
+      height: 40px;
+      background: #E1261C;
+      width: 100%;
+    }
+    @media (max-width: 767px) {
+      .initial-ticker { display: none; }
+    }
+    .initial-hero {
+      aspect-ratio: 16 / 9;
+      max-width: 1200px;
+      margin: 24px auto 0;
+      width: calc(100% - 32px);
+      background: #e2e8f0;
+      border-radius: 8px;
+      animation: pulse 1.5s infinite ease-in-out;
+      overflow: hidden;
+      position: relative;
+    }
+    .initial-hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+  </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="initial-loader">
+        <div class="initial-header">
+          <div class="initial-logo">INSIGHT<span class="initial-logo-red">DAILY</span></div>
+        </div>
+        <div class="initial-ticker"></div>
+        <div class="initial-hero"></div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

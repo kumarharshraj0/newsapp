@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="100%" height="100%">
+  <defs>
+    <linearGradient id="brandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E1261C" />
+      <stop offset="100%" stop-color="#FF5C55" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Graphic Icon -->
+  <g transform="translate(15, 20)">
+    <path d="M0,45 L15,10 L30,45" fill="none" stroke="url(#brandGradient)" stroke-width="8" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M15,10 L30,45 L45,20 L60,50" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" filter="url(#shadow)"/>
+    <circle cx="15" cy="10" r="5" fill="#E1261C" />
+    <circle cx="45" cy="20" r="4" fill="#FFFFFF" />
+  </g>
+
+  <!-- Text -->
+  <text x="95" y="60" font-family="'Inter', 'Arial', sans-serif" font-size="44" font-weight="900" fill="#FFFFFF" letter-spacing="-1">
+    INSIGHT<tspan fill="#E1261C">DAILY</tspan>
+  </text>
+  
+  <text x="98" y="80" font-family="'Inter', 'Arial', sans-serif" font-size="12" font-weight="600" fill="#CCCCCC" letter-spacing="3" text-transform="uppercase">
+    Global News Perspective
+  </text>
+</svg>
