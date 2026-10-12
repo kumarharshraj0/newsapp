@@ -128,17 +128,17 @@ app.get("/post/:postSlug", async (req, res, next) => {
     if (post) {
       const title = post.metaTitle || post.title
       const desc = post.metaDescription || (post.content ? post.content.replace(/<[^>]*>/g, "").substring(0, 155) : "")
-      const image = post.image || "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80"
+      const image = post.image || "https://newpulse.in/logo.png"
       
       // Inject Post-Specific Meta Tags
-      html = html.replace(/<meta property="og:title" content="[^"]*"\s*\/>/i, `<meta property="og:title" content="${title} | News18 India" />`)
+      html = html.replace(/<meta property="og:title" content="[^"]*"\s*\/>/i, `<meta property="og:title" content="${title} | News Pulse" />`)
       html = html.replace(/<meta property="og:description" content="[^"]*"\s*\/>/i, `<meta property="og:description" content="${desc}" />`)
-      html = html.replace(/<meta property="og:image" content="[^"]*"\s*\/>/i, `<meta property="og:image" content="${image}" />`)
+      html = html.replace(/<meta property="og:image" content="[^"]*"\s*\/>/i, `<meta property="og:image" content="${image}" />\n    <meta property="og:image:secure_url" content="${image}" />`)
       
-      html = html.replace(/<meta name="twitter:title" content="[^"]*"\s*\/>/i, `<meta name="twitter:title" content="${title} | News18 India" />`)
+      html = html.replace(/<meta name="twitter:title" content="[^"]*"\s*\/>/i, `<meta name="twitter:title" content="${title} | News Pulse" />`)
       html = html.replace(/<meta name="twitter:description" content="[^"]*"\s*\/>/i, `<meta name="twitter:description" content="${desc}" />`)
       html = html.replace(/<meta name="twitter:image" content="[^"]*"\s*\/>/i, `<meta name="twitter:image" content="${image}" />`)
-      html = html.replace(/<title>.*?<\/title>/i, `<title>${title} | News18 India</title>`)
+      html = html.replace(/<title>.*?<\/title>/i, `<title>${title} | News Pulse</title>`)
     }
     
     res.send(html)

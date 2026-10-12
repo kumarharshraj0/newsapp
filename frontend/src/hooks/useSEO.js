@@ -4,9 +4,9 @@ export default function useSEO({ title, description, keywords, ogImage, ogType, 
   useEffect(() => {
     // 1. Title Tag
     if (title) {
-      document.title = `${title.replace("News18 India", "Insight Daily")} | Insight Daily`
+      document.title = `${title.replace(/News18 India|Insight Daily/g, "News Pulse")} | News Pulse`
     } else {
-      document.title = "Insight Daily: Latest News, Breaking News, Global News"
+      document.title = "News Pulse: Latest News, Breaking News, Global News"
     }
 
     // Helper to set or create meta tag
@@ -29,23 +29,25 @@ export default function useSEO({ title, description, keywords, ogImage, ogType, 
     }
 
     // 2. Meta Description
-    setMetaTag("description", null, description || "News18 India Clone - Get the latest news, breaking news updates, and top stories on politics, sports, entertainment, business, and world news.")
+    setMetaTag("description", null, description || "News Pulse - Get the latest news, breaking news updates, and top stories on politics, sports, entertainment, business, and world news.")
 
     // 3. Keywords
-    setMetaTag("keywords", null, keywords || "news, breaking news, news18 india, india news, world news, sports news, local news")
+    setMetaTag("keywords", null, keywords || "news, breaking news, news pulse, world news, sports news, business news, tech news")
 
     // 4. Open Graph Tags
-    setMetaTag(null, "og:title", title ? `${title} | News18 India` : "News18 India: Latest News, Breaking News, News in India")
-    setMetaTag(null, "og:description", description || "News18 India Clone - Get the latest news, breaking news updates, and top stories.")
-    setMetaTag(null, "og:image", ogImage || "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80")
+    const finalImage = ogImage || "https://newpulse.in/logo.png"
+    setMetaTag(null, "og:title", title ? `${title} | News Pulse` : "News Pulse: Latest News, Breaking News, Live Updates")
+    setMetaTag(null, "og:description", description || "News Pulse - Get the latest news, breaking news updates, and top stories.")
+    setMetaTag(null, "og:image", finalImage)
+    setMetaTag(null, "og:image:secure_url", finalImage)
     setMetaTag(null, "og:type", ogType || "website")
     setMetaTag(null, "og:url", window.location.href)
 
     // 5. Twitter Card Tags
     setMetaTag("twitter:card", null, "summary_large_image")
-    setMetaTag("twitter:title", null, title ? `${title} | News18 India` : "News18 India: Latest News, Breaking News, News in India")
-    setMetaTag("twitter:description", null, description || "News18 India Clone - Get the latest news, breaking news updates, and top stories.")
-    setMetaTag("twitter:image", null, ogImage || "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80")
+    setMetaTag("twitter:title", null, title ? `${title} | News Pulse` : "News Pulse: Latest News, Breaking News, Live Updates")
+    setMetaTag("twitter:description", null, description || "News Pulse - Get the latest news, breaking news updates, and top stories.")
+    setMetaTag("twitter:image", null, finalImage)
 
     // 6. LD-JSON Schema
     const existingSchema = document.querySelector('script[data-post-schema]')
