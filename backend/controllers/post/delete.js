@@ -1,5 +1,6 @@
 import Post from "../../models/post.model.js"
 import { errorHandler } from "../../utils/error.js"
+import { invalidateCache } from "../../utils/cache.js"
 
 export const deletepost = async (req, res, next) => {
   if (!req.user.isAdmin && req.user.id !== req.params.userId) {
@@ -8,8 +9,10 @@ export const deletepost = async (req, res, next) => {
 
   try {
     await Post.findByIdAndDelete(req.params.postId)
+    invalidateCache("posts")
     res.status(200).json("Post has been deleted!")
   } catch (error) {
     next(error)
   }
 }
+

@@ -7,6 +7,7 @@ const Footer = React.lazy(() => import("./components/shared/Footer"))
 import { Toaster } from "./components/ui/toaster"
 import PrivateRoute from "./components/shared/PrivateRoute"
 import ScrollToTop from "./components/shared/ScrollToTop"
+import GoogleAnalytics from "./components/shared/GoogleAnalytics"
 import axios from "axios"
 
 import Home from "./pages/Home"
@@ -32,6 +33,7 @@ const App = () => {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <ScrollToTop />
+      <GoogleAnalytics />
       <Header />
       <Suspense fallback={<FallbackLoader />}>
         <Routes>
@@ -54,6 +56,9 @@ const App = () => {
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/update-post/:postId" element={<EditPost />} />
           </Route>
+
+          {/* Direct clean article slug route: e.g. /:postSlug */}
+          <Route path="/:postSlug" element={<PostDetails />} />
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

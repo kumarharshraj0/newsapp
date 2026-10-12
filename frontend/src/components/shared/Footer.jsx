@@ -56,17 +56,17 @@ const Footer = () => {
         <div className="flex flex-col gap-3 md:col-span-2">
           <div className="flex items-center font-extrabold tracking-tighter text-2xl select-none mb-2">
               <div className="flex items-center">
-                <img src="/logo-light.svg" alt="Insight Daily Logo" className="h-12 md:h-14 object-contain" />
+                <img src="/logo-light.svg" alt="News Pulse Logo" className="h-12 md:h-14 object-contain" />
               </div>
           </div>
           <p className="text-gray-300 text-xs md:text-sm leading-relaxed whitespace-pre-wrap">
-            {settings.about_text || "Insight Daily is committed to delivering the most reliable, accurate, and prompt news reporting from across the country and the globe. Stay informed, stay ahead."}
+            {settings.about_text || "News Pulse is committed to delivering the most reliable, accurate, and prompt news reporting from across the country and the globe. Stay informed, stay ahead."}
           </p>
         </div>
 
         {/* Quick links to categories */}
         <div>
-          <h4 className="text-sm font-black uppercase tracking-wider mb-4 border-b border-white/10 pb-2">
+          <h4 className="text-sm font-black capitalize tracking-wider mb-4 border-b border-white/10 pb-2">
             Categories
           </h4>
           <ul className="space-y-2 text-xs md:text-sm text-gray-300">
@@ -132,7 +132,7 @@ const Footer = () => {
         </div>
 
         <p className="mt-2">
-          &copy; {new Date().getFullYear()} Insight Daily. All rights reserved.
+          &copy; {new Date().getFullYear()} News Pulse. All rights reserved.
         </p>
       </div>
     </footer>

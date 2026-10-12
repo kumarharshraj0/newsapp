@@ -2,6 +2,9 @@ import React, { useEffect, useState, useCallback, useMemo, useTransition, useDef
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import axios from "axios"
+import { SlidersHorizontal } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Translate } from "@/hooks/useTranslation"
 import { fetchSearchPosts } from "@/redux/posts/postsSlice"
 import usePageSEO from "@/hooks/usePageSEO"
 import useSEO from "@/hooks/useSEO"
@@ -19,6 +22,7 @@ const Search = () => {
   const [categories, setCategories] = useState([])
   const [subcategories, setSubcategories] = useState([])
   const [sidebarData, setSidebarData] = useState({ searchTerm: "", sort: "desc", category: "", subcategory: "" })
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false)
 
   // useTransition: mark navigation as non-urgent so current UI stays responsive
   const [isPending, startTransition] = useTransition()
@@ -64,7 +68,8 @@ const Search = () => {
 
   // useCallback: stable reference so SearchSidebar doesn't re-render unnecessarily
   const handleSubmit = useCallback((e) => {
-    e.preventDefault()
+    if (e && e.preventDefault) e.preventDefault()
+    setIsMobileFilterOpen(false)
     const params = new URLSearchParams()
     if (deferredSearchTerm) params.set("searchTerm", deferredSearchTerm)
     params.set("sort", sidebarData.sort)
@@ -77,6 +82,14 @@ const Search = () => {
       navigate(`${base}?${params.toString()}`)
     })
   }, [deferredSearchTerm, sidebarData, navigate, startTransition])
+
+  const handleReset = useCallback(() => {
+    setIsMobileFilterOpen(false)
+    setSidebarData({ searchTerm: "", sort: "desc", category: "", subcategory: "" })
+    startTransition(() => {
+      navigate("/search")
+    })
+  }, [navigate, startTransition])
 
   // useCallback: stable page change handler
   const handlePageChange = useCallback((page) => {
@@ -107,7 +120,7 @@ const Search = () => {
   })
 
   return (
-    <div className="flex flex-col md:flex-row">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50/50">
       <SearchSidebar
         sidebarData={sidebarData}
         setSidebarData={setSidebarData}
@@ -115,14 +128,38 @@ const Search = () => {
         subcategories={subcategories}
         onSubmit={handleSubmit}
         isPending={isPending}
+        isMobileOpen={isMobileFilterOpen}
+        onCloseMobile={() => setIsMobileFilterOpen(false)}
+        onReset={handleReset}
       />
-      <SearchResults
-        posts={searchPosts}
-        loading={searchLoading || isPending}
-        totalPosts={searchTotal}
-        currentPage={currentPage}
-        onPageChange={handlePageChange}
-      />
+      <div className="flex-1 w-full flex flex-col">
+        {/* Mobile Filter Action Bar */}
+        <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200 sticky top-0 z-30 shadow-xs">
+          <div className="text-sm font-semibold text-gray-700">
+            {searchPosts.length} <Translate text="Articles" language={selectedLanguage} />
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setIsMobileFilterOpen(true)}
+            className="flex items-center gap-2 border-red-600 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-full px-4 py-1.5 text-xs font-bold shadow-xs active:scale-95 transition-all"
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <Translate text="Filters" language={selectedLanguage} />
+            {Boolean(sidebarData.searchTerm || (sidebarData.category && sidebarData.category !== "all") || (sidebarData.sort && sidebarData.sort !== "desc")) && (
+              <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
+            )}
+          </Button>
+        </div>
+
+        <SearchResults
+          posts={searchPosts}
+          loading={searchLoading || isPending}
+          totalPosts={searchTotal}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   )
 }

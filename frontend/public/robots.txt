@@ -2,5 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /api/
+Disallow: /dashboard/
 
-Sitemap: https://www.news18india.com/sitemap.xml
+Sitemap: https://newpulse.in/sitemap.xml
+

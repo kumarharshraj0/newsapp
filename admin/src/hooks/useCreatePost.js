@@ -12,10 +12,57 @@ export const useCreatePost = () => {
   const [file, setFile] = useState(null)
   const [imageUploadError, setImageUploadError] = useState(null)
   const [imageUploading, setImageUploading] = useState(false)
-  const [formData, setFormData] = useState({ language: "english" })
+  // Load draft from localStorage on initial render
+  const [formData, setFormData] = useState(() => {
+    try {
+      const savedDraft = localStorage.getItem("news_article_draft")
+      if (savedDraft) {
+        return JSON.parse(savedDraft)
+      }
+    } catch (e) {
+      console.error("Error reading draft from localStorage:", e)
+    }
+    return { language: "english" }
+  })
+  const [hasDraftRestored, setHasDraftRestored] = useState(false)
   const [categories, setCategories] = useState([])
   const [subcategories, setSubcategories] = useState([])
   const [createPostError, setCreatePostError] = useState(null)
+
+  // Check if draft was restored on mount to notify user
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem("news_article_draft")
+      if (savedDraft) {
+        const parsed = JSON.parse(savedDraft)
+        if (parsed.title || parsed.content) {
+          setHasDraftRestored(true)
+        }
+      }
+    } catch (e) {}
+  }, [])
+
+  // Auto-save draft whenever formData changes (with debounce)
+  useEffect(() => {
+    if (!formData.title && !formData.content && !formData.image) return
+    const timer = setTimeout(() => {
+      try {
+        localStorage.setItem("news_article_draft", JSON.stringify(formData))
+      } catch (e) {
+        console.error("Failed to auto-save draft:", e)
+      }
+    }, 600)
+    return () => clearTimeout(timer)
+  }, [formData])
+
+  const clearDraft = useCallback(() => {
+    try {
+      localStorage.removeItem("news_article_draft")
+      setFormData({ language: "english", title: "", content: "", image: "", slug: "", category: "", subcategory: "" })
+      setHasDraftRestored(false)
+      toast({ title: "Draft discarded." })
+    } catch (e) {}
+  }, [toast])
 
   useEffect(() => {
     axios.get("/api/category/getcategories", { validateStatus: () => true })
@@ -106,6 +153,8 @@ export const useCreatePost = () => {
         setCreatePostError(data.message || "Something went wrong!")
         return
       }
+      // Clear draft upon successful publish
+      localStorage.removeItem("news_article_draft")
       toast({ title: "Article Published Successfully!" })
       setCreatePostError(null)
       navigate("/dashboard?tab=posts")
@@ -129,6 +178,8 @@ export const useCreatePost = () => {
     imageUploadError,
     modules,
     handleSubmit,
+    hasDraftRestored,
+    clearDraft,
   }
 }
 export default useCreatePost

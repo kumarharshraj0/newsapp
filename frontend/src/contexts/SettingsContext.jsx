@@ -18,8 +18,7 @@ export const SettingsProvider = ({ children }) => {
         if (res.status < 300 && res.data.success && res.data.settings) {
           const newSettings = { ...settings };
           res.data.settings.forEach((setting) => {
-            if (setting.key === "logo") newSettings.logo = setting.value;
-            if (setting.key === "favicon") newSettings.favicon = setting.value;
+            newSettings[setting.key] = setting.value;
             if (setting.key === "trending_tags") newSettings.trendingTags = setting.value;
           });
           setSettings(newSettings);

@@ -57,7 +57,7 @@ const PostCard = memo(({ post }) => {
         {/* Read More */}
         <Link
           to={getPostUrl(post)}
-          className="mt-auto inline-flex items-center justify-center border border-gray-300 hover:border-[#E1261C] hover:bg-[#E1261C] text-sm font-black text-gray-700 hover:text-white text-center py-2.5 rounded-full transition-all duration-200 uppercase tracking-widest"
+          className="mt-auto inline-flex items-center justify-center border border-gray-300 hover:border-[#E1261C] hover:bg-[#E1261C] text-sm font-semibold text-gray-700 hover:text-white text-center py-2.5 rounded-full transition-all duration-200 capitalize tracking-wide"
         >
           Read Article
         </Link>

@@ -1,16 +1,27 @@
 import Post from "../../models/post.model.js"
 import { errorHandler } from "../../utils/error.js"
+import { invalidateCache } from "../../utils/cache.js"
 
 export const create = async (req, res, next) => {
   if (!req.body.title || !req.body.content) {
     return next(errorHandler(400, "Please provide all the required fields!"))
   }
 
-  const slug = req.body.title
-    .split(" ")
-    .join("-")
-    .toLowerCase()
-    .replace(/[^a-zA-Z0-9-]/g, "")
+  let slug = req.body.slug
+    ? req.body.slug
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-zA-Z0-9\u0900-\u097F-]/g, "")
+    : req.body.title
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-zA-Z0-9\u0900-\u097F-]/g, "")
+
+  if (!slug || slug === "-") {
+    slug = `article-${Date.now()}`
+  }
 
   const status = req.user.isAdmin ? "approved" : "pending"
 
@@ -23,6 +34,7 @@ export const create = async (req, res, next) => {
 
   try {
     const savedPost = await newPost.save()
+    invalidateCache("posts")
     res.status(201).json(savedPost)
   } catch (error) {
     next(error)

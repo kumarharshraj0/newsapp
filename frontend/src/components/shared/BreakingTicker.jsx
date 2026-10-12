@@ -18,7 +18,7 @@ const BreakingTicker = () => {
   }, [dispatch, homePosts])
 
   return (
-    <div className="hidden md:flex w-full bg-[#E1261C] items-center h-9 overflow-hidden shadow-sm">
+    <div className="flex w-full bg-[#E1261C] items-center h-9 overflow-hidden shadow-sm">
       <div className="bg-black text-white text-xs font-black uppercase px-4 h-full flex items-center select-none tracking-widest border-r border-[#E1261C] z-10 shrink-0">
         Breaking
       </div>

@@ -1,5 +1,12 @@
 import axios from "axios";
 
+// Production backend API URL (AWS EC2 / Elastic Beanstalk: newsapi.newpulse.in)
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+if (API_BASE_URL) {
+  axios.defaults.baseURL = API_BASE_URL;
+}
+axios.defaults.withCredentials = true;
+
 let isRefreshing = false;
 let failedQueue = [];
 

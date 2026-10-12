@@ -55,14 +55,14 @@ export default function usePageSEO(pageIdentifier, fallback = {}) {
         const res = await axios.get(`/api/seo/get/${pageIdentifier}`, { validateStatus: () => true })
         const data = res.status === 200 ? res.data : {}
 
-        document.title = data.metaTitle || fallback.title || "News18 India: Latest News, Breaking News"
+        document.title = data.metaTitle ? data.metaTitle.replace("News18 India", "Insight Daily") : (fallback.title || "Insight Daily: Latest News, Breaking News")
         applyMeta("description", data.metaDescription || fallback.description || "")
         applyMeta("keywords", data.keywords || fallback.keywords || "")
         applyCanonical(data.canonicalUrl || fallback.canonicalUrl || "")
         applySchema(data.schemaScript || "")
       } catch (err) {
         // Silently fall back to defaults
-        document.title = fallback.title || "News18 India: Latest News, Breaking News"
+        document.title = fallback.title || "Insight Daily: Latest News, Breaking News"
         applyMeta("description", fallback.description || "")
         applyMeta("keywords", fallback.keywords || "")
         applyCanonical(fallback.canonicalUrl || "")

@@ -13,9 +13,9 @@ const Home = () => {
   const { selectedLanguage } = useSelector((state) => state.language)
 
   usePageSEO("home", {
-    title: "Insight Daily: Latest News, Breaking News, Global News",
-    description: "Read the latest news headlines and live updates on Insight Daily.",
-    keywords: "insight daily, news, breaking news, politics news, sports news, global news",
+    title: "News Pulse: Latest News, Breaking News, Global News",
+    description: "Read the latest news headlines and live updates on News Pulse.",
+    keywords: "news pulse, news, breaking news, politics news, sports news, global news",
   })
 
   useEffect(() => {

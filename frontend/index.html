@@ -19,10 +19,10 @@
       <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
     </noscript>
 
-    <title>Insight Daily - Global News, Breaking News & Live Updates</title>
+    <title>News Pulse - Global News, Breaking News & Live Updates</title>
 
     <!-- Default Open Graph Tags for Social Media Sharing (WhatsApp, Facebook, LinkedIn) -->
-    <meta property="og:title" content="Insight Daily - Reliable & Breaking News" />
+    <meta property="og:title" content="News Pulse - Reliable & Breaking News" />
     <meta property="og:description" content="Get the latest breaking news, reliable reporting, and in-depth analysis from across the globe." />
     <meta property="og:image" content="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80" />
     <meta property="og:type" content="website" />
@@ -35,7 +35,7 @@
 
     <script>
       // Advance SPA Prefetch: Start API call immediately & preload LCP image before JS parses!
-      window.__INITIAL_DATA_PROMISE__ = fetch('/api/post/getPosts?limit=20')
+      window.__INITIAL_DATA_PROMISE__ = fetch('/api/post/getposts?limit=20')
         .then(res => res.json())
         .then(data => {
           if (data && data.posts && data.posts.length > 0) {

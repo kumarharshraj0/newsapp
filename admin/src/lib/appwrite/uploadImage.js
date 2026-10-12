@@ -13,34 +13,26 @@ const convertToBase64 = (file) => {
 }
 
 export async function uploadFile(file) {
-  try {
-    const base64Image = await convertToBase64(file)
+  const base64Image = await convertToBase64(file)
 
-    const response = await fetch("/api/upload/image", {
-      method: "POST",
+  const response = await axios.post(
+    "/api/upload/image",
+    { image: base64Image },
+    {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ image: base64Image }),
-    })
-
-    if (!response.ok) {
-      throw new Error("Failed to upload image through secure server route.")
+      withCredentials: true,
     }
+  )
 
-    const data = await response.json()
-    
-    // We return an object matching the Appwrite structure expected by page forms
+  if (response.data && response.data.success && response.data.secure_url) {
     return {
-      $id: data.secure_url,
-    }
-  } catch (error) {
-    console.error("Backend-secure upload failed: ", error)
-    // Return placeholder fallback on error so the user flow is not blocked
-    return {
-      $id: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80",
+      $id: response.data.secure_url,
     }
   }
+
+  throw new Error(response.data?.message || "Image upload failed")
 }
 
 export function getFilePreview(fileId) {

@@ -1,22 +1,16 @@
 module.exports = {
   apps: [
     {
-      name: "news-backend-api",
-      script: "./index.js",
-      instances: "max", // Uses all available CPU cores
-      exec_mode: "cluster", // Enables PM2 cluster mode
-      env: {
-        NODE_ENV: "development",
-      },
-      env_production: {
-        NODE_ENV: "production",
-      },
+      name: "news-api",
+      script: "index.js",
+      instances: "max", // Runs on all available CPU cores on AWS EC2
+      exec_mode: "cluster",
       watch: false,
-      max_memory_restart: "1G", // Auto-restart if a worker takes more than 1GB RAM
-      error_file: "./logs/err.log",
-      out_file: "./logs/out.log",
-      merge_logs: true,
-      time: true,
+      max_memory_restart: "800M",
+      env: {
+        NODE_ENV: "production",
+        PORT: 5001,
+      },
     },
   ],
 };

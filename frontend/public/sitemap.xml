@@ -1,33 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Core Static Pages -->
   <url>
-    <loc>https://www.news18india.com/</loc>
+    <loc>https://newpulse.in/</loc>
     <changefreq>always</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.news18india.com/search</loc>
+    <loc>https://newpulse.in/search</loc>
     <changefreq>hourly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.news18india.com/about</loc>
+    <loc>https://newpulse.in/about</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Categories -->
+  <url>
+    <loc>https://newpulse.in/news/worldnews</loc>
+    <changefreq>hourly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.news18india.com/news/worldnews</loc>
+    <loc>https://newpulse.in/news/sportsnews</loc>
     <changefreq>hourly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.news18india.com/news/sportsnews</loc>
+    <loc>https://newpulse.in/news/localnews</loc>
     <changefreq>hourly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.news18india.com/news/localnews</loc>
+    <loc>https://newpulse.in/news/technology</loc>
     <changefreq>hourly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://newpulse.in/news/business</loc>
+    <changefreq>hourly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Policy Pages -->
+  <url>
+    <loc>https://newpulse.in/page/editorial-policy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://newpulse.in/page/privacy-policy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://newpulse.in/page/terms-and-conditions</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://newpulse.in/page/about-us</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>
+

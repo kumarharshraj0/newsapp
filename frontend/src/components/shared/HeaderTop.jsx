@@ -33,7 +33,7 @@ const HeaderTop = ({ searchTerm, setSearchTerm, handleSubmit }) => {
         <Link to="/" className="transition-transform duration-200 hover:scale-[1.02]">
           <div className="flex items-center font-extrabold tracking-tighter text-3xl select-none">
               <div className="flex items-center">
-                <img src="/logo.svg" alt="Insight Daily Logo" className="h-12 md:h-14 object-contain" />
+                <img src="/logo.svg" alt="News Pulse Logo" className="h-12 md:h-14 object-contain" />
               </div>
           </div>
         </Link>

@@ -4,9 +4,9 @@ export default function useSEO({ title, description, keywords, ogImage, ogType, 
   useEffect(() => {
     // 1. Title Tag
     if (title) {
-      document.title = `${title} | News18 India`
+      document.title = `${title.replace("News18 India", "Insight Daily")} | Insight Daily`
     } else {
-      document.title = "News18 India: Latest News, Breaking News, News in India"
+      document.title = "Insight Daily: Latest News, Breaking News, Global News"
     }
 
     // Helper to set or create meta tag

@@ -30,8 +30,8 @@ export const uploadImage = async (req, res, next) => {
     // Upload base64 image string to Cloudinary with WebP and auto compression
     const uploadResponse = await cloudinary.uploader.upload(image, {
       folder: "newsportal",
-      format: "webp", // Industry standard for fast loading
-      quality: "auto", // Cloudinary automatically picks the best compression level
+      format: "webp",
+      quality: "auto",
       fetch_format: "auto",
     })
 
@@ -41,10 +41,9 @@ export const uploadImage = async (req, res, next) => {
     })
   } catch (error) {
     console.error("Cloudinary upload failed: ", error)
-    // Fallback on error to prevent breaking user post creation
-    return res.status(200).json({
-      success: true,
-      secure_url: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80",
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Cloudinary upload failed",
     })
   }
 }

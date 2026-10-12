@@ -42,11 +42,7 @@ export function timeAgo(dateParam) {
 
 export function getPostUrl(post) {
   if (!post) return "#"
-  const cat = post.category || "general"
-  if (post.subcategory && post.subcategory !== "all") {
-    return `/news/${cat}/${post.subcategory}/article/${post.slug}`
-  }
-  return `/news/${cat}/article/${post.slug}`
+  return `/${post.slug}`
 }
 
 export function getCategoryUrl(categorySlug, subcategorySlug) {

@@ -36,14 +36,38 @@ mongoose
 
 const app = express()
 
+// Optimize Express settings for High Throughput
+app.set("etag", "strong") // HTTP 304 Not Modified caching support
+app.disable("x-powered-by") // Security & tiny header byte reduction
+
 // CORS Configuration
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://newpulse.in",
+  "https://www.newpulse.in",
+  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+  ...(process.env.ADMIN_URL ? [process.env.ADMIN_URL] : []),
+]
+
 app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:5174"], // Add production domains here
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, server-to-server)
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".netlify.app") || origin.endsWith("newpulse.in")) {
+      return callback(null, true)
+    }
+    return callback(null, true) // Permissive for production deployment
+  },
   credentials: true,
 }))
 
+// Trust proxy for AWS EC2 / Elastic Beanstalk / Reverse Proxy (Nginx / ALB)
+app.set("trust proxy", 1)
+
 // Security Headers
-app.use(helmet())
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+}))
 
 // Compress Responses (Gzip/Brotli)
 app.use(compression())
@@ -56,8 +80,9 @@ const limiter = rateLimit({
 })
 app.use("/api/", limiter)
 
-// for allowing json object in req body with custom limit for base64 uploads
-app.use(express.json({ limit: "10mb" }))
+// for allowing large base64 image uploads without 413 Payload Too Large error
+app.use(express.json({ limit: "50mb" }))
+app.use(express.urlencoded({ limit: "50mb", extended: true }))
 app.use(cookieParser())
 
 const PORT = process.env.PORT || 5000
@@ -75,6 +100,10 @@ app.use("/api/category", categoryRoutes)
 app.use("/api/page", pageRoutes)
 app.use("/api/seo", seoRoutes)
 app.use("/api/settings", settingRoutes)
+
+// Serve dynamic sitemap.xml directly at root domain (https://newpulse.in/sitemap.xml)
+import { generateSitemap } from "./controllers/seo.controller.js"
+app.get("/sitemap.xml", generateSitemap)
 
 // --- Server-Side SEO Injection for Dynamic Routes (Production/Sharing) ---
 const __dirname = path.resolve()

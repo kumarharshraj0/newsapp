@@ -9,6 +9,26 @@ const PostSEOMetaFields = ({ formData, setFormData }) => {
       </h3>
       
       <div className="flex flex-col gap-1.5">
+        <label htmlFor="slug" className="text-xs font-semibold text-gray-700 flex items-center justify-between">
+          <span>Article URL Slug</span>
+          <span className="text-[11px] text-gray-500 font-normal">e.g. asia-cup-final-team-india-victory</span>
+        </label>
+        <Input
+          type="text"
+          placeholder="asia-cup-final-team-india-victory"
+          id="slug"
+          className="border border-slate-400 focus-visible:ring-0 focus-visible:ring-offset-0 bg-white font-mono text-xs"
+          value={formData.slug || ""}
+          onChange={(e) =>
+            setFormData({ ...formData, slug: e.target.value })
+          }
+        />
+        <span className="text-[10px] text-blue-600">
+          Preview: http://localhost:5173/{formData.slug || "custom-slug-here"}
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
         <label htmlFor="metaTitle" className="text-xs font-semibold text-gray-700">
           SEO Meta Title
         </label>

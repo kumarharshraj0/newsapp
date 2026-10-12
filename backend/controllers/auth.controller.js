@@ -57,20 +57,27 @@ export const signin = async (req, res, next) => {
     const token = jwt.sign(
       { id: validUser._id, isAdmin: validUser.isAdmin },
       process.env.JWT_SECRET,
-      { expiresIn: "15m" }
+      { expiresIn: "7d" }
     )
     const refreshToken = jwt.sign(
       { id: validUser._id, isAdmin: validUser.isAdmin },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "30d" }
     )
 
     const { password: pass, ...rest } = validUser._doc
 
+    const isProd = process.env.NODE_ENV === "production"
+    const cookieOptions = {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+    }
+
     res
       .status(200)
-      .cookie("access_token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production" })
-      .cookie("refresh_token", refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === "production" })
+      .cookie("access_token", token, cookieOptions)
+      .cookie("refresh_token", refreshToken, cookieOptions)
       .json(rest)
   } catch (error) {
     next(error)
@@ -87,12 +94,12 @@ export const google = async (req, res, next) => {
       const token = jwt.sign(
         { id: user._id, isAdmin: user.isAdmin },
         process.env.JWT_SECRET,
-        { expiresIn: "15m" }
+        { expiresIn: "7d" }
       )
       const refreshToken = jwt.sign(
         { id: user._id, isAdmin: user.isAdmin },
         process.env.JWT_SECRET,
-        { expiresIn: "7d" }
+        { expiresIn: "30d" }
       )
 
       const { password: pass, ...rest } = user._doc
@@ -131,12 +138,12 @@ export const google = async (req, res, next) => {
     const token = jwt.sign(
       { id: newUser._id, isAdmin: newUser.isAdmin },
       process.env.JWT_SECRET,
-      { expiresIn: "15m" }
+      { expiresIn: "7d" }
     )
     const refreshToken = jwt.sign(
       { id: newUser._id, isAdmin: newUser.isAdmin },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "30d" }
     )
 
     const { password: pass, ...rest } = newUser._doc
@@ -175,29 +182,31 @@ export const refreshToken = async (req, res, next) => {
     const newAccessToken = jwt.sign(
       { id: user._id, isAdmin: user.isAdmin },
       process.env.JWT_SECRET,
-      { expiresIn: "15m" }
+      { expiresIn: "7d" }
     )
 
     const newRefreshToken = jwt.sign(
       { id: user._id, isAdmin: user.isAdmin },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "30d" }
     )
+
+    const isProd = process.env.NODE_ENV === "production"
+    const cookieOptions = {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+    }
 
     res
       .status(200)
-      .cookie("access_token", newAccessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      })
-      .cookie("refresh_token", newRefreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      })
+      .cookie("access_token", newAccessToken, cookieOptions)
+      .cookie("refresh_token", newRefreshToken, cookieOptions)
       .json({ success: true })
   } catch (error) {
-    res.clearCookie("access_token")
-    res.clearCookie("refresh_token")
+    const isProd = process.env.NODE_ENV === "production"
+    res.clearCookie("access_token", { secure: isProd, sameSite: isProd ? "none" : "lax" })
+    res.clearCookie("refresh_token", { secure: isProd, sameSite: isProd ? "none" : "lax" })
     return next(errorHandler(401, "Invalid or expired refresh token"))
   }
 }

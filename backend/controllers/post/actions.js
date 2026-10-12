@@ -1,5 +1,6 @@
 import Post from "../../models/post.model.js"
 import { errorHandler } from "../../utils/error.js"
+import { invalidateCache } from "../../utils/cache.js"
 
 export const likePost = async (req, res, next) => {
   try {
@@ -16,6 +17,7 @@ export const likePost = async (req, res, next) => {
       post.numberOfLikes -= 1
     }
     await post.save()
+    invalidateCache("posts")
     res.status(200).json(post)
   } catch (error) {
     next(error)
@@ -33,6 +35,7 @@ export const approvePost = async (req, res, next) => {
       { new: true }
     )
     if (!post) return next(errorHandler(404, "Post not found"))
+    invalidateCache("posts")
     res.status(200).json(post)
   } catch (error) {
     next(error)
@@ -50,8 +53,10 @@ export const rejectPost = async (req, res, next) => {
       { new: true }
     )
     if (!post) return next(errorHandler(404, "Post not found"))
+    invalidateCache("posts")
     res.status(200).json(post)
   } catch (error) {
     next(error)
   }
 }
+

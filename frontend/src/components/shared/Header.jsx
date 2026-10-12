@@ -70,12 +70,12 @@ const Header = () => {
             setOpenDropdown={setOpenDropdown} setIsMobileMenuOpen={setIsMobileMenuOpen} selectedLanguage={selectedLanguage} />
         </React.Suspense>
       )}
-      <div className="bg-white border-b border-gray-200 py-1.5 shadow-sm text-xs select-none">
-        <div className="max-w-7xl mx-auto px-4 flex items-center gap-2 overflow-x-auto scrollbar-hide">
+      <div className="bg-white border-b border-gray-200 py-3 md:py-1.5 shadow-sm text-xs select-none">
+        <div className="max-w-7xl mx-auto px-4 flex items-center gap-4 md:gap-3 overflow-x-auto scrollbar-hide">
           <span className="font-extrabold text-[#E1261C] uppercase tracking-wider shrink-0 flex items-center gap-1">
             <TrendingUp className="w-3.5 h-3.5" /> {t("Trending:", selectedLanguage)}
           </span>
-          <div className="flex items-center gap-3 text-gray-600 font-bold shrink-0">
+          <div className="flex items-center gap-5 md:gap-4 text-gray-600 font-bold shrink-0">
             {trendingTags.map((tag) => (
               <Link key={tag} to={`/search?searchTerm=${tag.toLowerCase()}`} className="hover:text-[#E1261C] transition-colors">
                 #{tag}

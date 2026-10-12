@@ -1,6 +1,8 @@
 let isRefreshing = false;
 let failedQueue = [];
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+
 const processQueue = (error, token = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
@@ -17,6 +19,10 @@ const originalFetch = window.fetch;
 
 window.fetch = async (...args) => {
   try {
+    // If request starts with /api and API_BASE_URL is set, prepend baseURL
+    if (API_BASE_URL && typeof args[0] === "string" && args[0].startsWith("/api")) {
+      args[0] = `${API_BASE_URL}${args[0]}`;
+    }
     const response = await originalFetch(...args);
 
     if (response.status === 401 && !args[0].includes('/api/auth/refresh-token') && !args[0].includes('/api/auth/signin') && !args[0].includes('/api/auth/google')) {

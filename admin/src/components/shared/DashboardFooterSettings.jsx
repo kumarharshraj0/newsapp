@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram } from "react-icons/fa";
+import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaYoutube } from "react-icons/fa";
 
 const DashboardFooterSettings = () => {
   const { toast } = useToast();
@@ -18,6 +18,7 @@ const DashboardFooterSettings = () => {
     social_twitter: "",
     social_linkedin: "",
     social_instagram: "",
+    social_youtube: "",
   });
 
   useEffect(() => {
@@ -160,6 +161,15 @@ const DashboardFooterSettings = () => {
                 id="social_instagram"
                 placeholder="https://instagram.com/..."
                 value={formData.social_instagram || ""}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label className="flex items-center text-sm font-semibold mb-1 text-gray-700"><FaYoutube className="mr-2 text-red-600"/> YouTube URL</label>
+              <Input
+                id="social_youtube"
+                placeholder="https://youtube.com/..."
+                value={formData.social_youtube || ""}
                 onChange={handleChange}
               />
             </div>

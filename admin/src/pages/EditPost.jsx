@@ -1,10 +1,25 @@
 import React from "react"
 import ReactQuill, { Quill } from "react-quill"
 import "react-quill/dist/quill.snow.css"
-import ImageResize from "quill-image-resize-module-react"
 
-window.Quill = Quill
-Quill.register("modules/imageResize", ImageResize)
+// Safe Quill 1.x / 2.x Parchment Attributor fix for quill-image-resize-module-react
+if (typeof window !== "undefined") {
+  window.Quill = Quill
+  if (!Quill.imports) Quill.imports = {}
+  try {
+    const Parchment = Quill.import("parchment")
+    if (Parchment && !Parchment.Attributor && Quill.import("attributors")) {
+      Parchment.Attributor = Quill.import("attributors")
+    }
+  } catch (e) {}
+}
+
+import ImageResize from "quill-image-resize-module-react"
+try {
+  Quill.register("modules/imageResize", ImageResize)
+} catch (e) {
+  console.warn("ImageResize module registration notice:", e)
+}
 import { Button } from "@/components/ui/button"
 import { useEditPost } from "@/hooks/useEditPost"
 import PostFormFields from "@/components/shared/PostFormFields"

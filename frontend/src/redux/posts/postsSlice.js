@@ -15,7 +15,7 @@ export const fetchHomePosts = createAsyncThunk(
       }
       
       const langParam = language && language !== "all" ? `&language=${language}` : ""
-      const res = await axios.get(`/api/post/getPosts?limit=20${langParam}`)
+      const res = await axios.get(`/api/post/getposts?limit=20${langParam}`)
       return res.data.posts
     } catch (err) {
       return rejectWithValue(err.message)

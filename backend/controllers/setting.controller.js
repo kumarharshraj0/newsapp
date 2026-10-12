@@ -8,6 +8,7 @@ let settingsCache = {
 };
 const CACHE_TTL = 1000 * 60 * 5; // 5 minutes
 
+
 export const getSetting = async (req, res, next) => {
   try {
     const { key } = req.params;
@@ -56,6 +57,9 @@ export const updateSetting = async (req, res, next) => {
       setting = new Setting({ key, value });
       await setting.save();
     }
+    
+    // Invalidate cache
+    settingsCache.data = null;
     
     res.status(200).json({ success: true, setting });
   } catch (error) {
