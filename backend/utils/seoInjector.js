@@ -128,13 +128,25 @@ export const injectArticleMeta = async (req, res, next) => {
       dynamicTags += `\n    <meta property="og:url" content="${canonicalUrl}" />`
     }
     if (image) {
-      dynamicTags += `\n    <meta property="og:image" content="${image}" />`
-      dynamicTags += `\n    <meta property="og:image:secure_url" content="${image}" />`
+      let ogImage = image
+      if (ogImage.includes("res.cloudinary.com")) {
+        // WhatsApp link crawler strictly rejects .webp; convert Cloudinary URL to optimized 1200x630 JPG
+        ogImage = ogImage.replace(/\.webp($|\?)/i, ".jpg$1")
+        if (!ogImage.includes("/f_jpg") && ogImage.includes("/upload/")) {
+          ogImage = ogImage.replace("/upload/", "/upload/f_jpg,w_1200,h_630,c_fill/")
+        }
+      }
+
+      dynamicTags += `\n    <meta property="og:image" content="${ogImage}" />`
+      dynamicTags += `\n    <meta property="og:image:secure_url" content="${ogImage}" />`
+      dynamicTags += `\n    <meta property="og:image:type" content="image/jpeg" />`
+      dynamicTags += `\n    <meta property="og:image:width" content="1200" />`
+      dynamicTags += `\n    <meta property="og:image:height" content="630" />`
       if (imageAlt) {
         dynamicTags += `\n    <meta property="og:image:alt" content="${escapeHtml(imageAlt)}" />`
         dynamicTags += `\n    <meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}" />`
       }
-      dynamicTags += `\n    <meta name="twitter:image" content="${image}" />`
+      dynamicTags += `\n    <meta name="twitter:image" content="${ogImage}" />`
       dynamicTags += `\n    <meta name="twitter:card" content="summary_large_image" />`
     }
     dynamicTags += `\n    <meta property="og:type" content="article" />`
