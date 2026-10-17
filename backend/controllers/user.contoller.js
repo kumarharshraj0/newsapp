@@ -76,8 +76,15 @@ export const deleteUser = async (req, res, next) => {
 
 export const signout = async (req, res, next) => {
   try {
+    const isProd = process.env.NODE_ENV === "production"
+    const clearOpts = {
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      ...(isProd && { domain: ".newpulse.in" }),
+    }
     res
-      .clearCookie("access_token")
+      .clearCookie("access_token", clearOpts)
+      .clearCookie("refresh_token", clearOpts)
       .status(200)
       .json("User has been loggedout successfully!")
   } catch (error) {

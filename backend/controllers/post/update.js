@@ -14,12 +14,16 @@ export const updatepost = async (req, res, next) => {
       category: req.body.category,
       subcategory: req.body.subcategory,
       image: req.body.image,
+      imageAlt: req.body.imageAlt,
+      imageCaption: req.body.imageCaption,
       language: req.body.language,
       metaTitle: req.body.metaTitle,
       metaDescription: req.body.metaDescription,
       keywords: req.body.keywords,
       canonicalUrl: req.body.canonicalUrl,
+      metaRobots: req.body.metaRobots,
       schemaScript: req.body.schemaScript,
+      tags: req.body.tags,
     }
 
     if (req.body.slug) {

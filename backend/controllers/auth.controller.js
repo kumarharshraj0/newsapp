@@ -72,6 +72,7 @@ export const signin = async (req, res, next) => {
       httpOnly: true,
       secure: isProd,
       sameSite: isProd ? "none" : "lax",
+      ...(isProd && { domain: ".newpulse.in" }),
     }
 
     res
@@ -88,6 +89,14 @@ export const google = async (req, res, next) => {
   const { email, name, profilePhotoUrl } = req.body
 
   try {
+    const isProd = process.env.NODE_ENV === "production"
+    const cookieOptions = {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      ...(isProd && { domain: ".newpulse.in" }),
+    }
+
     const user = await User.findOne({ email })
 
     if (user) {
@@ -106,14 +115,8 @@ export const google = async (req, res, next) => {
 
       return res
         .status(200)
-        .cookie("access_token", token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-        })
-        .cookie("refresh_token", refreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-        })
+        .cookie("access_token", token, cookieOptions)
+        .cookie("refresh_token", refreshToken, cookieOptions)
         .json(rest)
     }
 
@@ -150,14 +153,8 @@ export const google = async (req, res, next) => {
 
     return res
       .status(200)
-      .cookie("access_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      })
-      .cookie("refresh_token", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      })
+      .cookie("access_token", token, cookieOptions)
+      .cookie("refresh_token", refreshToken, cookieOptions)
       .json(rest)
   } catch (error) {
     next(error)
@@ -196,6 +193,7 @@ export const refreshToken = async (req, res, next) => {
       httpOnly: true,
       secure: isProd,
       sameSite: isProd ? "none" : "lax",
+      ...(isProd && { domain: ".newpulse.in" }),
     }
 
     res
@@ -205,8 +203,13 @@ export const refreshToken = async (req, res, next) => {
       .json({ success: true })
   } catch (error) {
     const isProd = process.env.NODE_ENV === "production"
-    res.clearCookie("access_token", { secure: isProd, sameSite: isProd ? "none" : "lax" })
-    res.clearCookie("refresh_token", { secure: isProd, sameSite: isProd ? "none" : "lax" })
+    const clearOpts = {
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      ...(isProd && { domain: ".newpulse.in" }),
+    }
+    res.clearCookie("access_token", clearOpts)
+    res.clearCookie("refresh_token", clearOpts)
     return next(errorHandler(401, "Invalid or expired refresh token"))
   }
 }

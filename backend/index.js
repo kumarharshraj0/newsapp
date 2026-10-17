@@ -44,8 +44,6 @@ app.disable("x-powered-by") // Security & tiny header byte reduction
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
-  "https://newpulse.in",
-  "https://www.newpulse.in",
   ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
   ...(process.env.ADMIN_URL ? [process.env.ADMIN_URL] : []),
 ]
@@ -113,39 +111,12 @@ app.use("/admin", express.static(path.join(__dirname, "../admin/dist"), { index:
 // Serve static frontend build files
 app.use(express.static(path.join(__dirname, "../frontend/dist"), { index: false }))
 
-// Intercept specific routes to dynamically inject OG tags before sending HTML
-app.get("/post/:postSlug", async (req, res, next) => {
-  try {
-    const indexPath = path.join(__dirname, "../frontend/dist/index.html")
-    if (!fs.existsSync(indexPath)) {
-      // Fallback if frontend is not built yet (dev mode)
-      return next()
-    }
+// Dynamic SEO Meta Injection for WhatsApp, Facebook, Twitter, and Google Discover
+import { injectArticleMeta } from "./utils/seoInjector.js"
 
-    let html = fs.readFileSync(indexPath, "utf-8")
-    const post = await Post.findOne({ slug: req.params.postSlug })
-
-    if (post) {
-      const title = post.metaTitle || post.title
-      const desc = post.metaDescription || (post.content ? post.content.replace(/<[^>]*>/g, "").substring(0, 155) : "")
-      const image = post.image || "https://newpulse.in/logo.png"
-      
-      // Inject Post-Specific Meta Tags
-      html = html.replace(/<meta property="og:title" content="[^"]*"\s*\/>/i, `<meta property="og:title" content="${title} | News Pulse" />`)
-      html = html.replace(/<meta property="og:description" content="[^"]*"\s*\/>/i, `<meta property="og:description" content="${desc}" />`)
-      html = html.replace(/<meta property="og:image" content="[^"]*"\s*\/>/i, `<meta property="og:image" content="${image}" />\n    <meta property="og:image:secure_url" content="${image}" />`)
-      
-      html = html.replace(/<meta name="twitter:title" content="[^"]*"\s*\/>/i, `<meta name="twitter:title" content="${title} | News Pulse" />`)
-      html = html.replace(/<meta name="twitter:description" content="[^"]*"\s*\/>/i, `<meta name="twitter:description" content="${desc}" />`)
-      html = html.replace(/<meta name="twitter:image" content="[^"]*"\s*\/>/i, `<meta name="twitter:image" content="${image}" />`)
-      html = html.replace(/<title>.*?<\/title>/i, `<title>${title} | News Pulse</title>`)
-    }
-    
-    res.send(html)
-  } catch (error) {
-    next(error)
-  }
-})
+app.get("/post/:postSlug", injectArticleMeta)
+app.get("/news/:category/article/:postSlug", injectArticleMeta)
+app.get("/news/:category/:subcategory/article/:postSlug", injectArticleMeta)
 
 // Catch-all route to serve the Admin SPA
 app.get("/admin/*", (req, res) => {
@@ -157,8 +128,22 @@ app.get("/admin/*", (req, res) => {
   }
 })
 
-// Catch-all route to serve the Frontend SPA
-app.get("*", (req, res) => {
+// Catch-all route to serve the Frontend SPA (with SEO injection for direct slug URLs e.g. /:slug)
+app.get("*", async (req, res, next) => {
+  // If the path could be an article slug (not static files / root / common static paths)
+  const pathname = req.path.replace(/^\/|\/$/g, "")
+  if (pathname && !pathname.includes(".") && !pathname.startsWith("api") && !pathname.startsWith("admin")) {
+    try {
+      const postExists = await Post.exists({ slug: pathname })
+      if (postExists) {
+        req.params.slug = pathname
+        return injectArticleMeta(req, res, next)
+      }
+    } catch (e) {
+      // Continue to default SPA fallback
+    }
+  }
+
   const indexPath = path.join(__dirname, "../frontend/dist/index.html")
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath)

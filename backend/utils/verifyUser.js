@@ -32,9 +32,12 @@ export const verifyToken = (req, res, next) => {
         { expiresIn: "7d" }
       )
 
+      const isProd = process.env.NODE_ENV === "production"
       res.cookie("access_token", newAccessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax",
+        ...(isProd && { domain: ".newpulse.in" }),
       })
 
       req.user = refreshUser
