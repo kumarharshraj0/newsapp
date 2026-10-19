@@ -108,6 +108,22 @@ export const generateSitemap = async (req, res, next) => {
   }
 }
 
+// XML Escaping helper conforming to W3C XML 1.0 Spec
+const escapeXml = (unsafe = "") => {
+  if (!unsafe) return ""
+  return String(unsafe)
+    .replace(/&nbsp;/g, " ")
+    .replace(/&bull;/g, " ")
+    .replace(/&mdash;/g, "—")
+    .replace(/&ndash;/g, "–")
+    .replace(/&amp;/g, "&") // normalize first to prevent double-escaping
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;")
+}
+
 export const generateNewsSitemap = async (req, res, next) => {
   try {
     const baseUrl = "https://newpulse.in"
@@ -133,7 +149,7 @@ export const generateNewsSitemap = async (req, res, next) => {
     posts.forEach((post) => {
       if (post.slug) {
         const pubDate = post.createdAt ? new Date(post.createdAt).toISOString() : new Date().toISOString()
-        const title = (post.title || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;")
+        const title = escapeXml(post.title || "")
         const lang = post.language === "hindi" ? "hi" : "en"
 
         xml += `  <url>\n`
@@ -189,9 +205,10 @@ export const generateRssFeed = async (req, res, next) => {
       if (post.slug) {
         const itemUrl = `${baseUrl}/post/${encodeURI(post.slug)}`
         const pubDate = post.createdAt ? new Date(post.createdAt).toUTCString() : buildDate
-        const title = (post.title || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;")
-        const desc = post.metaDescription || (post.content ? post.content.replace(/<[^>]+>/g, " ").slice(0, 200) : "")
-        const cleanDesc = desc.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;")
+        const title = escapeXml(post.title || "")
+        const rawDesc = post.metaDescription || (post.content ? post.content.replace(/<[^>]+>/g, " ").slice(0, 200) : "")
+        const cleanDesc = escapeXml(rawDesc)
+        const category = escapeXml(post.category || "News")
 
         rss += `    <item>\n`
         rss += `      <title>${title}</title>\n`
@@ -199,10 +216,14 @@ export const generateRssFeed = async (req, res, next) => {
         rss += `      <guid isPermaLink="true">${itemUrl}</guid>\n`
         rss += `      <pubDate>${pubDate}</pubDate>\n`
         rss += `      <description>${cleanDesc}</description>\n`
-        rss += `      <category>${post.category || "News"}</category>\n`
+        rss += `      <category>${category}</category>\n`
         if (post.image) {
-          rss += `      <enclosure url="${post.image}" type="image/jpeg" length="12345" />\n`
-          rss += `      <media:content url="${post.image}" medium="image" />\n`
+          const imageUrl = escapeXml(post.image)
+          let mimeType = "image/jpeg"
+          if (imageUrl.includes(".webp")) mimeType = "image/webp"
+          else if (imageUrl.includes(".png")) mimeType = "image/png"
+          rss += `      <enclosure url="${imageUrl}" type="${mimeType}" length="12345" />\n`
+          rss += `      <media:content url="${imageUrl}" medium="image" />\n`
         }
         rss += `    </item>\n`
       }
@@ -217,5 +238,6 @@ export const generateRssFeed = async (req, res, next) => {
     next(error)
   }
 }
+
 
 

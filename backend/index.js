@@ -103,6 +103,7 @@ app.use("/api/settings", settingRoutes)
 // Serve dynamic sitemaps & RSS feed directly at root domain
 app.get("/sitemap.xml", generateSitemap)
 app.get("/news-sitemap.xml", generateNewsSitemap)
+app.get("/sitemap-news.xml", generateNewsSitemap)
 app.get("/rss.xml", generateRssFeed)
 app.get("/feed", generateRssFeed)
 
