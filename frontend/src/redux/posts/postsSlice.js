@@ -96,6 +96,13 @@ export const fetchPostBySlug = createAsyncThunk(
   "posts/fetchBySlug",
   async (slug, { rejectWithValue }) => {
     try {
+      if (typeof window !== "undefined" && window.__INITIAL_ARTICLE_PROMISE__) {
+        const data = await window.__INITIAL_ARTICLE_PROMISE__
+        window.__INITIAL_ARTICLE_PROMISE__ = null
+        if (data?.posts && data.posts.length > 0) {
+          return data.posts[0]
+        }
+      }
       const res = await axios.get(`/api/post/getposts?slug=${slug}`)
       if (res.data.posts && res.data.posts.length > 0) {
         return res.data.posts[0]

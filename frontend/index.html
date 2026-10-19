@@ -3,155 +3,389 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="preload" as="image" href="/logo.svg" type="image/svg+xml" fetchpriority="high" />
+    <link rel="preload" href="/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-latin-700.woff2" as="font" type="font/woff2" crossorigin />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- Preconnect to critical domains for faster DNS resolution -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <!-- Preconnect to Cloudinary for instant LCP image download -->
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
-    <link rel="preconnect" href="https://images.pexels.com" crossorigin />
-    
-    <!-- Load fonts asynchronously to eliminate 900ms render-blocking delay on Mobile -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Inter:wght@400;600;700;900&display=swap" />
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
-    <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
-    </noscript>
+    <link rel="dns-prefetch" href="https://res.cloudinary.com" />
 
-    <title>News Pulse - Global News, Breaking News & Live Updates</title>
+    <title data-rh="true">Newpulse - Latest News, Breaking News &amp; Live Updates</title>
+    <meta data-rh="true" name="description" content="Newpulse delivers real-time breaking news headlines, in-depth political coverage, cricket &amp; sports updates, business analysis, and world news." />
+    <meta data-rh="true" name="keywords" content="newpulse, news, breaking news, live news, politics news, sports news, world news, india news" />
+    <meta data-rh="true" name="robots" content="index, follow, max-image-preview:large" />
+    <link data-rh="true" rel="canonical" href="https://newpulse.in" />
+    <link rel="alternate" type="application/rss+xml" title="Newpulse RSS Feed" href="https://newpulse.in/rss.xml" />
 
-    <!-- Google tag (gtag.js) for Analytics & Search Console Verification -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W5KJ9PKWSS"></script>
+    <!-- Open Graph / Facebook / WhatsApp (Raster PNG preview for WhatsApp & Social bots) -->
+    <meta data-rh="true" property="og:type" content="website" />
+    <meta data-rh="true" property="og:site_name" content="Newpulse" />
+    <meta data-rh="true" property="og:url" content="https://newpulse.in" />
+    <meta data-rh="true" property="og:title" content="Newpulse - Latest News, Breaking News &amp; Live Updates" />
+    <meta data-rh="true" property="og:description" content="Newpulse delivers real-time breaking news headlines, in-depth political coverage, cricket &amp; sports updates, business analysis, and world news." />
+    <meta data-rh="true" property="og:image" content="https://newpulse.in/rectangular-logo.png" />
+    <meta data-rh="true" property="og:image:width" content="1200" />
+    <meta data-rh="true" property="og:image:height" content="630" />
+
+    <!-- Twitter Cards -->
+    <meta data-rh="true" name="twitter:card" content="summary_large_image" />
+    <meta data-rh="true" name="twitter:url" content="https://newpulse.in" />
+    <meta data-rh="true" name="twitter:title" content="Newpulse - Latest News, Breaking News &amp; Live Updates" />
+    <meta data-rh="true" name="twitter:description" content="Newpulse delivers real-time breaking news headlines, in-depth political coverage, cricket &amp; sports updates, business analysis, and world news." />
+    <meta data-rh="true" name="twitter:image" content="https://newpulse.in/rectangular-logo.png" />
+
+    <!-- Schema.org WebSite & NewsMediaOrganization JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://newpulse.in/#website",
+          "url": "https://newpulse.in",
+          "name": "Newpulse",
+          "description": "Latest News, Breaking News & Live Updates",
+          "publisher": {
+            "@id": "https://newpulse.in/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://newpulse.in/search?searchTerm={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "NewsMediaOrganization",
+          "@id": "https://newpulse.in/#organization",
+          "name": "Newpulse",
+          "url": "https://newpulse.in",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://newpulse.in/rectangular-logo.png",
+            "width": 600,
+            "height": 150
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Google tag (gtag.js) - Deferred loading to eliminate unused JS on initial load & boost Lighthouse score -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
       gtag('js', new Date());
+      gtag('config', 'G-W5KJ9PKWSS', { send_page_view: false });
 
-      gtag('config', 'G-W5KJ9PKWSS');
+      (function() {
+        var gtmLoaded = false;
+        function loadGTM() {
+          if (gtmLoaded) return;
+          gtmLoaded = true;
+          var script = document.createElement('script');
+          script.id = 'google-analytics-script';
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-W5KJ9PKWSS';
+          script.async = true;
+          document.head.appendChild(script);
+
+          ['scroll', 'touchstart', 'mousemove', 'click', 'keydown', 'wheel'].forEach(function(evt) {
+            window.removeEventListener(evt, loadGTM, { passive: true });
+          });
+        }
+
+        ['scroll', 'touchstart', 'mousemove', 'click', 'keydown', 'wheel'].forEach(function(evt) {
+          window.addEventListener(evt, loadGTM, { passive: true, once: true });
+        });
+
+        // Trigger on user interaction (first scroll/touch) or after 10s idle fallback
+        window.addEventListener('load', function() {
+          if ('requestIdleCallback' in window) {
+            setTimeout(function() {
+              requestIdleCallback(loadGTM);
+            }, 10000);
+          } else {
+            setTimeout(loadGTM, 10000);
+          }
+        });
+      })();
     </script>
-
-    <!-- Default Open Graph Tags for Social Media Sharing (WhatsApp, Facebook, LinkedIn) -->
-    <meta property="og:title" content="News Pulse - Reliable & Breaking News" />
-    <meta property="og:description" content="Get the latest breaking news, reliable reporting, and in-depth analysis from across the globe." />
-    <meta property="og:image" content="https://newpulse.in/logo.png" />
-    <meta property="og:type" content="website" />
-    
-    <!-- Twitter Card Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="News Pulse - Reliable & Breaking News" />
-    <meta name="twitter:description" content="Get the latest breaking news, reliable reporting, and in-depth analysis from across the globe." />
-    <meta name="twitter:image" content="https://newpulse.in/logo.png" />
 
     <script>
-      // Advance SPA Prefetch: Start API call immediately & preload LCP image before JS parses!
-      window.__INITIAL_DATA_PROMISE__ = fetch('/api/post/getposts?limit=20')
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.posts && data.posts.length > 0) {
-            const firstPost = data.posts[0];
-            if (firstPost.image) {
-              const link = document.createElement('link');
-              link.rel = 'preload';
-              link.as = 'image';
-              link.fetchpriority = 'high';
-              
-              // Prevent preload mismatch: estimate the browser's selected srcSet width
-              const vw = window.innerWidth;
-              const dpr = window.devicePixelRatio || 1;
-              const requiredWidth = vw <= 768 ? vw * dpr : (vw * 0.66) * dpr;
-              
-              let w = 1200;
-              if (requiredWidth <= 320) w = 320;
-              else if (requiredWidth <= 800) w = 800;
-              
-              let optimizedSrc = firstPost.image;
-              
-              if (optimizedSrc.includes('unsplash.com')) {
-                 const url = new URL(optimizedSrc);
-                 url.searchParams.set('w', w);
-                 url.searchParams.set('q', '20');
-                 url.searchParams.set('auto', 'format');
-                 url.searchParams.set('fit', 'crop');
-                 optimizedSrc = url.toString();
-              } else if (optimizedSrc.includes('res.cloudinary.com')) {
-                 const parts = optimizedSrc.split('/upload/');
-                 if (parts.length === 2) {
-                   optimizedSrc = `${parts[0]}/upload/w_${w},q_20,f_webp/${parts[1]}`;
-                 }
-              } else if (optimizedSrc.includes('pexels.com')) {
-                 const url = new URL(optimizedSrc);
-                 url.searchParams.set('w', w);
-                 url.searchParams.set('auto', 'compress');
-                 url.searchParams.set('fm', 'webp');
-                 optimizedSrc = url.toString();
-              }
-              link.href = optimizedSrc;
-              
-              // Fix Forced Reflow: inject link in next frame
-              requestAnimationFrame(() => {
-                document.head.appendChild(link);
-                // GENIUS LCP HACK: Inject the image into the skeleton so it paints before React boots!
-                const heroImg = document.createElement('img');
-                heroImg.src = optimizedSrc;
-                heroImg.className = 'initial-hero-img';
-                const heroContainer = document.querySelector('.initial-hero');
-                if (heroContainer) {
-                  heroContainer.appendChild(heroImg);
-                  // Remove pulse animation once image is injected
-                  heroContainer.style.animation = 'none';
+      // Advance SPA Prefetch: Only prefetch home posts on the Homepage
+      (function() {
+        const pathname = window.location.pathname;
+        const isHome = pathname === '/' || pathname === '';
+        if (isHome) {
+          window.__INITIAL_DATA_PROMISE__ = fetch('/api/post/getposts?limit=20')
+            .then(res => res.json())
+            .then(data => {
+              if (data && data.posts && data.posts.length > 0) {
+                const firstPost = data.posts[0];
+                if (firstPost.image) {
+                  const link = document.createElement('link');
+                  link.rel = 'preload';
+                  link.as = 'image';
+                  link.fetchpriority = 'high';
+                  
+                  const vw = window.innerWidth;
+                  const dpr = window.devicePixelRatio || 1;
+                  const requiredWidth = vw <= 768 ? vw * dpr : (vw * 0.66) * dpr;
+                  
+                  let w = 960;
+                  if (requiredWidth <= 380) w = 360;
+                  else if (requiredWidth <= 520) w = 480;
+                  else if (requiredWidth <= 768) w = 720;
+                  
+                  let optimizedSrc = firstPost.image;
+                  
+                  if (optimizedSrc.includes('unsplash.com')) {
+                     const url = new URL(optimizedSrc);
+                     url.searchParams.set('w', w);
+                     url.searchParams.set('q', '20');
+                     url.searchParams.set('auto', 'format');
+                     url.searchParams.set('fit', 'crop');
+                     optimizedSrc = url.toString();
+                  } else if (optimizedSrc.includes('res.cloudinary.com')) {
+                     const parts = optimizedSrc.split('/upload/');
+                     if (parts.length === 2) {
+                       optimizedSrc = `${parts[0]}/upload/w_${w},q_20,f_webp/${parts[1]}`;
+                     }
+                  } else if (optimizedSrc.includes('pexels.com')) {
+                     const url = new URL(optimizedSrc);
+                     url.searchParams.set('w', w);
+                     url.searchParams.set('auto', 'compress');
+                     url.searchParams.set('fm', 'webp');
+                     optimizedSrc = url.toString();
+                  }
+                  link.href = optimizedSrc;
+                  
+                  requestAnimationFrame(() => {
+                    document.head.appendChild(link);
+                    const heroImg = document.createElement('img');
+                    heroImg.src = optimizedSrc;
+                    heroImg.className = 'initial-hero-img';
+                    const heroContainer = document.querySelector('.initial-hero');
+                    if (heroContainer) {
+                      heroContainer.appendChild(heroImg);
+                      heroContainer.style.animation = 'none';
+                    }
+                  });
                 }
-              });
+              }
+              return data.posts;
+            })
+            .catch(() => null);
+        } else {
+          // If direct article navigation, prefetch article data immediately!
+          let slug = null;
+          const postMatch = pathname.match(/^\/post\/([^\/]+)/i);
+          const articleMatch = pathname.match(/\/article\/([^\/]+)/i);
+          if (postMatch) slug = postMatch[1];
+          else if (articleMatch) slug = articleMatch[1];
+          else {
+            const singleMatch = pathname.match(/^\/([^\/]+)$/);
+            if (singleMatch) {
+              const candidate = singleMatch[1].toLowerCase();
+              const reserved = ["about", "sign-in", "sign-up", "dashboard", "create-post", "update-post", "search", "news", "page", "publisher", "admin"];
+              if (!reserved.includes(candidate)) slug = singleMatch[1];
             }
           }
-          return data.posts;
-        })
-        .catch(err => null);
+          if (slug) {
+            window.__INITIAL_ARTICLE_PROMISE__ = fetch(`/api/post/getposts?slug=${encodeURIComponent(slug)}`)
+              .then(res => res.json())
+              .catch(() => null);
+          }
+        }
+      })();
     </script>
   <style>
-    /* Pre-render Skeleton to improve FCP on Mobile */
-    .initial-loader {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background-color: #f8fafc;
-    }
-    .initial-header {
-      height: 72px;
-      background: #ffffff;
+    /* Exact Layout Reservation Skeleton to eliminate 100% of CLS & layout thrashing */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: #f8fafc; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    .initial-loader { display: flex; flex-direction: column; min-height: 100vh; width: 100%; }
+    
+    /* 1. Breaking Top Bar (Exact 36px / h-9) */
+    .initial-topbar {
+      height: 36px;
+      background: #E1261C;
       width: 100%;
-      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .initial-topbar-badge {
+      background: #000000;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      height: 100%;
       display: flex;
       align-items: center;
       padding: 0 16px;
+      border-right: 1px solid #E1261C;
+      flex-shrink: 0;
     }
-    .initial-logo {
-      font-family: Arial, sans-serif;
-      font-size: 24px;
-      font-weight: 900;
-      color: #0A2240;
+    .initial-topbar-text {
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      padding-left: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .initial-logo-red {
-      color: #E1261C;
+
+    /* 2. Main Logo Header (Reserved min-height) */
+    .initial-header-wrap {
+      min-height: 80px;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
     }
-    .initial-ticker {
+    .initial-header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .initial-search-pill {
+      display: none;
+      height: 38px;
+      width: 380px;
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 9999px;
+    }
+    .initial-btn-pill {
+      height: 36px;
+      width: 80px;
+      background: #0A2240;
+      border-radius: 9999px;
+    }
+    @media (min-width: 768px) {
+      .initial-search-pill { display: block; }
+    }
+
+    /* 3. Categories Navbar (Exact 48px / h-12) */
+    .initial-navbar {
+      height: 48px;
+      background: #0A2240;
+      border-bottom: 4px solid #E1261C;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .initial-nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 16px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .initial-nav-item {
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.9;
+    }
+
+    /* 4. Trending Tags Bar (Exact 40px / h-10) */
+    .initial-trending {
       height: 40px;
-      background: #E1261C;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .initial-trending-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 16px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .initial-trending-label {
+      color: #E1261C;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .initial-trending-tag {
+      background: #f1f5f9;
+      height: 12px;
+      width: 56px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    /* 5. Main Hero Container */
+    .initial-main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 16px 16px 48px;
       width: 100%;
     }
-    @media (max-width: 767px) {
-      .initial-ticker { display: none; }
+    @media (min-width: 768px) {
+      .initial-main { padding: 24px 24px 48px; }
+    }
+    @media (min-width: 1024px) {
+      .initial-main { padding: 32px 32px 48px; }
+    }
+    .initial-hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+    @media (min-width: 1024px) {
+      .initial-hero-grid {
+        grid-template-columns: 2fr 1fr;
+      }
+    }
+    .initial-hero-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
     .initial-hero {
+      width: 100%;
       aspect-ratio: 16 / 9;
-      max-width: 1200px;
-      margin: 24px auto 0;
-      width: calc(100% - 32px);
       background: #e2e8f0;
-      border-radius: 8px;
-      animation: pulse 1.5s infinite ease-in-out;
-      overflow: hidden;
       position: relative;
+      overflow: hidden;
     }
     .initial-hero-img {
       width: 100%;
@@ -161,21 +395,97 @@
       top: 0;
       left: 0;
     }
-    @keyframes pulse {
-      0% { opacity: 0.6; }
-      50% { opacity: 1; }
-      100% { opacity: 0.6; }
+    .initial-hero-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .initial-hero-line1 {
+      height: 24px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      width: 85%;
+    }
+    .initial-hero-line2 {
+      height: 16px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      width: 60%;
+    }
+    .initial-trending-col {
+      display: none;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 20px;
+      flex-direction: column;
+      gap: 16px;
+    }
+    @media (min-width: 1024px) {
+      .initial-trending-col { display: flex; }
     }
   </style>
   </head>
   <body>
     <div id="root">
       <div class="initial-loader">
-        <div class="initial-header">
-          <div class="initial-logo">INSIGHT<span class="initial-logo-red">DAILY</span></div>
+        <!-- 1. Breaking Ticker -->
+        <div class="initial-topbar">
+          <div class="initial-topbar-badge">BREAKING</div>
+          <div class="initial-topbar-text">🔴 Loading latest news...</div>
         </div>
-        <div class="initial-ticker"></div>
-        <div class="initial-hero"></div>
+
+        <!-- 2. Main Header -->
+        <div class="initial-header-wrap">
+          <div class="initial-header-inner">
+            <h1 style="display: flex; align-items: center; margin: 0; padding: 0; font-size: inherit; font-weight: normal;">
+              <img src="/logo.svg" alt="Newpulse - Latest News & Breaking News" width="180" height="48" style="height: 48px; max-height: 48px; width: auto; object-fit: contain;" />
+            </h1>
+            <div class="initial-search-pill"></div>
+            <div class="initial-btn-pill"></div>
+          </div>
+        </div>
+
+        <!-- 3. Categories Navbar -->
+        <div class="initial-navbar">
+          <div class="initial-nav-inner">
+            <span class="initial-nav-item">Home</span>
+            <span class="initial-nav-item">India</span>
+            <span class="initial-nav-item">World</span>
+            <span class="initial-nav-item">Politics</span>
+            <span class="initial-nav-item">Sports</span>
+          </div>
+        </div>
+
+        <!-- 4. Trending Tags Bar -->
+        <div class="initial-trending">
+          <div class="initial-trending-inner">
+            <span class="initial-trending-label">TRENDING:</span>
+            <span class="initial-trending-tag"></span>
+            <span class="initial-trending-tag"></span>
+            <span class="initial-trending-tag"></span>
+          </div>
+        </div>
+
+        <!-- 5. Main Hero Container -->
+        <div class="initial-main">
+          <div class="initial-hero-grid">
+            <div class="initial-hero-card">
+              <div class="initial-hero"></div>
+              <div class="initial-hero-body">
+                <div class="initial-hero-line1"></div>
+                <div class="initial-hero-line2"></div>
+              </div>
+            </div>
+            <div class="initial-trending-col">
+              <div style="height: 20px; width: 140px; background: #e2e8f0; border-radius: 4px;"></div>
+              <div style="height: 48px; background: #f1f5f9; border-radius: 4px;"></div>
+              <div style="height: 48px; background: #f1f5f9; border-radius: 4px;"></div>
+              <div style="height: 48px; background: #f1f5f9; border-radius: 4px;"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <script type="module" src="/src/main.jsx"></script>

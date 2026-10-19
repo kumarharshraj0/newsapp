@@ -149,8 +149,14 @@ export const generateNewsSitemap = async (req, res, next) => {
     posts.forEach((post) => {
       if (post.slug) {
         const pubDate = post.createdAt ? new Date(post.createdAt).toISOString() : new Date().toISOString()
-        const title = escapeXml(post.title || "")
-        const lang = post.language === "hindi" ? "hi" : "en"
+        // Strip leading bullets, asterisks, and hyphens per Google News guidelines
+        const rawTitle = (post.title || "").replace(/^[•\s\-\*|:]+/, "").trim()
+        const title = escapeXml(rawTitle || post.title || "")
+        // Auto-detect Hindi from Devanagari Unicode characters or language field
+        const isHindi = (post.language && post.language.toLowerCase().includes("hi")) ||
+          /[\u0900-\u097F]/.test(post.title || "") ||
+          /[\u0900-\u097F]/.test(post.content || "")
+        const lang = isHindi ? "hi" : "en"
 
         xml += `  <url>\n`
         xml += `    <loc>${baseUrl}/post/${encodeURI(post.slug)}</loc>\n`
