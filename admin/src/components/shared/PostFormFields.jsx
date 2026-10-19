@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import TagInput from "@/components/shared/TagInput"
 
 const PostFormFields = ({ formData, setFormData, categories, subcategories, handleCategoryChange }) => {
   return (
@@ -87,6 +88,12 @@ const PostFormFields = ({ formData, setFormData, categories, subcategories, hand
           </SelectContent>
         </Select>
       </div>
+
+      {/* Article Tags & Topic Badges */}
+      <TagInput
+        tags={formData.tags || []}
+        setTags={(newTags) => setFormData({ ...formData, tags: newTags })}
+      />
     </div>
   )
 }

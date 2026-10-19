@@ -4,9 +4,9 @@ export default function useSEO({ title, description, keywords, ogImage, ogType }
   useEffect(() => {
     // 1. Title Tag
     if (title) {
-      document.title = `${title} | News18 India`
+      document.title = `${title} | Newpulse Admin`
     } else {
-      document.title = "News18 India: Latest News, Breaking News, News in India"
+      document.title = "Newpulse Admin: Portal Management"
     }
 
     // Helper to set or create meta tag
@@ -29,7 +29,7 @@ export default function useSEO({ title, description, keywords, ogImage, ogType }
     }
 
     // 2. Meta Description
-    setMetaTag("description", null, description || "News18 India Clone - Get the latest news, breaking news updates, and top stories on politics, sports, entertainment, business, and world news.")
+    setMetaTag("description", null, description || "Newpulse Admin Portal - Portal Management and Publishing.")
 
     // 3. Keywords
     setMetaTag("keywords", null, keywords || "news, breaking news, news pulse, world news, sports news, local news")

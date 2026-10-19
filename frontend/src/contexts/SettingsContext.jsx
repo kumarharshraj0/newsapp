@@ -41,7 +41,9 @@ export const SettingsProvider = ({ children }) => {
       }
     };
     
-    fetchAllSettings();
+    // Defer non-critical settings fetch to after initial mount to keep main thread clear
+    const timer = setTimeout(fetchAllSettings, 150);
+    return () => clearTimeout(timer);
   }, []);
 
   return (

@@ -42,7 +42,7 @@ export function timeAgo(dateParam) {
 
 export function getPostUrl(post) {
   if (!post) return "#"
-  return `/${post.slug}`
+  return `/post/${post.slug}`
 }
 
 export function getCategoryUrl(categorySlug, subcategorySlug) {

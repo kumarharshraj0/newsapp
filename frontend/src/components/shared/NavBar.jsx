@@ -5,18 +5,18 @@ import { getCategoryUrl } from "@/lib/utils"
 import { Translate } from "@/hooks/useTranslation"
 
 const NavBar = ({ categories, openDropdown, setOpenDropdown, handleCategoryClick, isMobileMenuOpen, setIsMobileMenuOpen, selectedLanguage }) => (
-  <nav className="bg-[#0A2240] border-b-4 border-[#E1261C] shadow-md w-full sticky top-0 z-40 overflow-visible">
-    <div className="max-w-7xl mx-auto px-4 flex justify-between lg:justify-start items-center py-1">
+  <nav className="bg-[#0A2240] border-b-4 border-[#E1261C] shadow-md w-full h-12 flex items-center sticky top-0 z-40 overflow-visible">
+    <div className="max-w-7xl mx-auto px-4 flex justify-between lg:justify-start items-center w-full">
       <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         aria-label="Toggle Mobile Menu"
         aria-expanded={isMobileMenuOpen}
-        className="lg:hidden p-2 text-white hover:bg-[#E1261C] transition-colors rounded flex items-center gap-1 font-black text-xs uppercase tracking-wider">
+        className="lg:hidden p-1.5 text-white hover:bg-[#E1261C] transition-colors rounded flex items-center gap-1 font-black text-xs uppercase tracking-wider">
         {isMobileMenuOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
         <span><Translate text="Menu" language={selectedLanguage} /></span>
       </button>
 
       <ul className="hidden lg:flex items-center gap-1 font-bold text-white text-xs uppercase tracking-wider whitespace-nowrap">
-        <li><Link to="/" className="inline-block px-4 py-3 hover:bg-[#E1261C] transition-colors rounded"><Translate text="Home" language={selectedLanguage} /></Link></li>
+        <li><Link to="/" className="inline-block px-4 py-2.5 hover:bg-[#E1261C] transition-colors rounded"><Translate text="Home" language={selectedLanguage} /></Link></li>
         {categories.map((cat) => (
           <li key={cat._id} className="relative select-none">
             <button onClick={(e) => handleCategoryClick(e, cat)}
@@ -38,7 +38,6 @@ const NavBar = ({ categories, openDropdown, setOpenDropdown, handleCategoryClick
             )}
           </li>
         ))}
-        <li><Link to="/about" className="inline-block px-4 py-3 hover:bg-[#E1261C] transition-colors rounded"><Translate text="About Us" language={selectedLanguage} /></Link></li>
       </ul>
     </div>
   </nav>

@@ -78,12 +78,6 @@ const NavBar = ({
               )}
             </li>
           ))}
-
-          <li>
-            <Link to="/about" className="inline-block px-4 py-3 hover:bg-[#E1261C] transition-colors rounded">
-              About Us
-            </Link>
-          </li>
         </ul>
       </div>
     </nav>

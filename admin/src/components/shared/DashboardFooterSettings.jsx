@@ -107,7 +107,7 @@ const DashboardFooterSettings = () => {
               <Input
                 id="contact_email"
                 type="email"
-                placeholder="e.g. contact@news18india.com"
+                placeholder="e.g. contact@newpulse.in"
                 value={formData.contact_email || ""}
                 onChange={handleChange}
               />

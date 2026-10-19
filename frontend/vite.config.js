@@ -44,10 +44,25 @@ export default defineConfig(({ mode }) => ({
     // React, router, and redux rarely change → cached long-term by browser
     rollupOptions: {
       output: {
-        manualChunks: {
-          "vendor-react": ["react", "react-dom", "react-router-dom"],
-          "vendor-redux": ["@reduxjs/toolkit", "react-redux", "redux-persist"],
-          "vendor-ui": ["lucide-react", "react-icons"],
+        manualChunks(id) {
+          // Sirf core runtime ko alag chunk banayein
+          if (
+            id.includes('react-dom') ||
+            id.includes('/react/') ||
+            id.includes('react-router') ||
+            id.includes('@remix-run') ||
+            id.includes('react-helmet')
+          ) {
+            return 'vendor-react-core';
+          }
+          if (
+            id.includes('@reduxjs/toolkit') ||
+            id.includes('react-redux') ||
+            id.includes('redux-persist')
+          ) {
+            return 'vendor-redux';
+          }
+          // Radix, lucide aur doosri libraries lazy route chunks ke sath auto-split hongi
         },
       },
     },

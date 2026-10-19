@@ -3,20 +3,20 @@ import axios from "axios"
 
 /**
  * Fetches SEO settings for a given pageIdentifier from the backend
- * and applies them to the document <head>.
- * Falls back to provided defaults if no backend data exists.
+ * and applies full document title, meta tags, Open Graph, Twitter Cards,
+ * canonical links, and Schema.org JSON-LD to the document <head>.
  *
- * @param {string} pageIdentifier - e.g. 'home', 'about', 'search'
- * @param {object} fallback - { title, description, keywords, canonicalUrl }
+ * @param {string} pageIdentifier - e.g. 'home', 'about', 'search', 'category_sports'
+ * @param {object} fallback - { title, description, keywords, canonicalUrl, ogImage, metaRobots, schemaScript }
  */
 export default function usePageSEO(pageIdentifier, fallback = {}) {
   useEffect(() => {
-    const applyMeta = (name, content) => {
+    const applyMeta = (attr, key, content) => {
       if (!content) return
-      let el = document.querySelector(`meta[name="${name}"]`)
+      let el = document.querySelector(`meta[${attr}="${key}"]`)
       if (!el) {
         el = document.createElement("meta")
-        el.setAttribute("name", name)
+        el.setAttribute(attr, key)
         document.head.appendChild(el)
       }
       el.setAttribute("content", content)
@@ -35,7 +35,6 @@ export default function usePageSEO(pageIdentifier, fallback = {}) {
 
     const applySchema = (schemaText) => {
       if (!schemaText) return
-      // Remove any existing injected schema
       const existing = document.querySelector('script[data-page-schema]')
       if (existing) existing.remove()
       try {
@@ -50,22 +49,49 @@ export default function usePageSEO(pageIdentifier, fallback = {}) {
       }
     }
 
+    const syncMetadata = (data) => {
+      const title = data.metaTitle || fallback.title || "Newpulse"
+      const description = data.metaDescription || fallback.description || ""
+      const keywords = data.keywords || fallback.keywords || ""
+      const robots = data.metaRobots || fallback.metaRobots || "index, follow, max-image-preview:large"
+      const canonical = data.canonicalUrl || fallback.canonicalUrl || (typeof window !== "undefined" ? window.location.href.split("?")[0] : "")
+      const image = data.ogImage || fallback.ogImage || "https://newpulse.in/rectangular-logo.png"
+
+      // 1. Standard HTML Meta
+      document.title = title
+      applyMeta("name", "robots", robots)
+      applyMeta("name", "description", description)
+      applyMeta("name", "keywords", keywords)
+      applyCanonical(canonical)
+
+      // 2. Open Graph Social Meta Tags
+      applyMeta("property", "og:type", "website")
+      applyMeta("property", "og:site_name", "Newpulse")
+      applyMeta("property", "og:title", title)
+      applyMeta("property", "og:description", description)
+      applyMeta("property", "og:url", canonical)
+      applyMeta("property", "og:image", image)
+      applyMeta("property", "og:image:width", "1200")
+      applyMeta("property", "og:image:height", "630")
+
+      // 3. Twitter Card Tags
+      applyMeta("name", "twitter:card", "summary_large_image")
+      applyMeta("name", "twitter:title", title)
+      applyMeta("name", "twitter:description", description)
+      applyMeta("name", "twitter:url", canonical)
+      applyMeta("name", "twitter:image", image)
+
+      // 4. Schema Script
+      applySchema(data.schemaScript || fallback.schemaScript || "")
+    }
+
     const fetchAndApply = async () => {
       try {
         const res = await axios.get(`/api/seo/get/${pageIdentifier}`, { validateStatus: () => true })
         const data = res.status === 200 ? res.data : {}
-
-        document.title = data.metaTitle ? data.metaTitle.replace("News18 India", "Insight Daily") : (fallback.title || "Insight Daily: Latest News, Breaking News")
-        applyMeta("description", data.metaDescription || fallback.description || "")
-        applyMeta("keywords", data.keywords || fallback.keywords || "")
-        applyCanonical(data.canonicalUrl || fallback.canonicalUrl || "")
-        applySchema(data.schemaScript || "")
+        syncMetadata(data)
       } catch (err) {
-        // Silently fall back to defaults
-        document.title = fallback.title || "Insight Daily: Latest News, Breaking News"
-        applyMeta("description", fallback.description || "")
-        applyMeta("keywords", fallback.keywords || "")
-        applyCanonical(fallback.canonicalUrl || "")
+        syncMetadata({})
       }
     }
 

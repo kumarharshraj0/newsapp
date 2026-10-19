@@ -44,7 +44,7 @@ const DashboardSidebar = () => {
           {currentUser && currentUser.isAdmin && (
             <li>
               <a
-                href="http://localhost:5174/"
+                href={import.meta.env.PROD ? "https://admin.newpulse.in/" : "http://localhost:5174/"}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center p-3 hover:bg-red-900/40 rounded-lg text-red-400 font-bold transition-colors"

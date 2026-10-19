@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table"
+import { Eye } from "lucide-react"
 
 const MainDashboard = () => {
   const [users, setUsers] = useState([])
@@ -232,6 +233,7 @@ const MainDashboard = () => {
               <TableRow>
                 <TableHead>Post image</TableHead>
                 <TableHead>Post Title</TableHead>
+                <TableHead className="text-center font-semibold text-gray-700">Views</TableHead>
                 <TableHead>Category</TableHead>
               </TableRow>
             </TableHeader>
@@ -249,6 +251,13 @@ const MainDashboard = () => {
                     </TableCell>
 
                     <TableCell className="w-80">{post.title}</TableCell>
+
+                    <TableCell className="text-center whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-sky-50 text-sky-700 border border-sky-200 rounded-full text-xs font-semibold shadow-xs">
+                        <Eye className="w-3.5 h-3.5 text-sky-600" />
+                        {(post.views || 0).toLocaleString()}
+                      </span>
+                    </TableCell>
 
                     <TableCell className="w-5">{post.category}</TableCell>
                   </TableRow>

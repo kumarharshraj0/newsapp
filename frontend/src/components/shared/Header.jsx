@@ -10,7 +10,7 @@ import HeaderTop from "./HeaderTop"
 import NavBar from "./NavBar"
 
 // Lazy load non-critical UI to dramatically speed up FCP on mobile
-const BreakingTicker = React.lazy(() => import("./BreakingTicker"))
+import BreakingTicker from "./BreakingTicker"
 const MobileMenu = React.lazy(() => import("./MobileMenu"))
 
 const Header = () => {
@@ -57,34 +57,54 @@ const Header = () => {
   }
 
   return (
-    <div className="w-full flex flex-col font-sans">
-      <React.Suspense fallback={<div className="h-8 bg-gray-100" />}>
+    <header className="w-full flex flex-col font-sans">
+      {/* 1. Breaking Top Bar - Exact height h-9 (36px) reserved */}
+      <div className="h-9 w-full bg-[#E1261C] shrink-0 overflow-hidden">
         <BreakingTicker />
-      </React.Suspense>
-      <HeaderTop searchTerm={searchTerm} setSearchTerm={setSearchTerm} handleSubmit={handleSubmit} />
-      <NavBar categories={categories} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown}
-        handleCategoryClick={handleCategoryClick} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} selectedLanguage={selectedLanguage} />
+      </div>
+
+      {/* 2. Main Logo & Search Bar - Reserved min-height */}
+      <div className="min-h-[80px] w-full bg-white border-b border-gray-200 shrink-0">
+        <HeaderTop searchTerm={searchTerm} setSearchTerm={setSearchTerm} handleSubmit={handleSubmit} />
+      </div>
+
+      {/* 3. Categories Navbar - Reserved height h-12 (48px) */}
+      <div className="h-12 w-full bg-[#0A2240] shrink-0">
+        <NavBar categories={categories} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown}
+          handleCategoryClick={handleCategoryClick} isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} selectedLanguage={selectedLanguage} />
+      </div>
+
       {isMobileMenuOpen && (
         <React.Suspense fallback={null}>
           <MobileMenu categories={categories} openDropdown={openDropdown}
             setOpenDropdown={setOpenDropdown} setIsMobileMenuOpen={setIsMobileMenuOpen} selectedLanguage={selectedLanguage} />
         </React.Suspense>
       )}
-      <div className="bg-white border-b border-gray-200 py-3 md:py-1.5 shadow-sm text-xs select-none">
-        <div className="max-w-7xl mx-auto px-4 flex items-center gap-4 md:gap-3 overflow-x-auto scrollbar-hide">
+
+      {/* 4. Trending Tags Bar - Reserved height h-10 (40px) */}
+      <div className="h-10 w-full bg-white border-b border-gray-200 shadow-sm text-xs select-none shrink-0 flex items-center">
+        <div className="max-w-7xl mx-auto px-4 w-full flex items-center gap-4 md:gap-3 overflow-x-auto scrollbar-hide">
           <span className="font-extrabold text-[#E1261C] uppercase tracking-wider shrink-0 flex items-center gap-1">
             <TrendingUp className="w-3.5 h-3.5" /> {t("Trending:", selectedLanguage)}
           </span>
           <div className="flex items-center gap-5 md:gap-4 text-gray-600 font-bold shrink-0">
-            {trendingTags.map((tag) => (
-              <Link key={tag} to={`/search?searchTerm=${tag.toLowerCase()}`} className="hover:text-[#E1261C] transition-colors">
-                #{tag}
-              </Link>
-            ))}
+            {trendingTags && trendingTags.length > 0 ? (
+              trendingTags.map((tag) => (
+                <Link key={tag} to={`/search?searchTerm=${tag.toLowerCase()}`} className="hover:text-[#E1261C] transition-colors">
+                  #{tag}
+                </Link>
+              ))
+            ) : (
+              <div className="flex items-center gap-3 py-1">
+                <span className="w-16 h-2.5 bg-gray-200 rounded animate-pulse inline-block" />
+                <span className="w-20 h-2.5 bg-gray-200 rounded animate-pulse inline-block" />
+                <span className="w-14 h-2.5 bg-gray-200 rounded animate-pulse inline-block" />
+              </div>
+            )}
           </div>
         </div>
       </div>
-    </div>
+    </header>
   )
 }
 

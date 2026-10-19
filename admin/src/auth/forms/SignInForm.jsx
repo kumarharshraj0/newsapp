@@ -36,7 +36,7 @@ const formSchema = z.object({
 const SignInForm = () => {
   useSEO({
     title: "Sign In",
-    description: "Sign in to your News18 India account to read articles, like, comment, and engage with the latest updates.",
+    description: "Sign in to your Newpulse Admin dashboard to manage articles, categories, and settings.",
   })
 
   const { toast } = useToast()

@@ -63,7 +63,7 @@ const DashboardUserPosts = () => {
               {userPosts.map((post) => (
                 <TableBody className="divide-y" key={post._id}>
                   <TableRow>
-                    <TableCell className="text-xs text-gray-500">{new Date(post.updatedAt).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-xs text-gray-500">{new Date(post.createdAt || post.updatedAt).toLocaleDateString()}</TableCell>
                     <TableCell><img src={post.image} alt={post.title} className="w-16 h-10 object-cover bg-gray-200 rounded" /></TableCell>
                     <TableCell className="max-w-[220px]"><span className="font-medium line-clamp-2 text-slate-800">{post.title}</span></TableCell>
                     <TableCell><span className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs font-medium">{post.category || "—"}</span></TableCell>

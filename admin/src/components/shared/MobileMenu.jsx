@@ -87,15 +87,6 @@ const MobileMenu = ({
               )}
             </li>
           ))}
-          <li>
-            <Link
-              to="/about"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-4 py-3 text-white font-bold uppercase text-xs tracking-wider hover:bg-[#E1261C]"
-            >
-              About Us
-            </Link>
-          </li>
         </ul>
       </div>
     </div>

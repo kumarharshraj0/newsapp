@@ -37,9 +37,6 @@ const MobileMenu = ({ categories, openDropdown, setOpenDropdown, setIsMobileMenu
             )}
           </li>
         ))}
-        <li>
-          <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 text-white font-bold uppercase text-xs tracking-wider hover:bg-[#E1261C]"><Translate text="About Us" language={selectedLanguage} /></Link>
-        </li>
       </ul>
     </div>
   </div>

@@ -1,8 +1,17 @@
 User-agent: *
 Allow: /
-Disallow: /admin/
-Disallow: /api/
-Disallow: /dashboard/
+Disallow: /admin
+Disallow: /api
+Disallow: /dashboard
+Disallow: /search
+Disallow: /*?*searchTerm=*
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-News
+Allow: /
 
 Sitemap: https://newpulse.in/sitemap.xml
+Sitemap: https://newpulse.in/news-sitemap.xml
 

@@ -19,7 +19,6 @@ const Header = () => {
   const [categories, setCategories] = useState([])
   const [openDropdown, setOpenDropdown] = useState(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [logo, setLogo] = useState(null)
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -44,18 +43,6 @@ const Header = () => {
     const term = urlParams.get("searchTerm")
     if (term) setSearchTerm(term)
   }, [location.search])
-
-  useEffect(() => {
-    const fetchLogo = async () => {
-      try {
-        const res = await axios.get("/api/settings/logo")
-        if (res.data.success && res.data.setting) setLogo(res.data.setting.value)
-      } catch (err) {
-        console.log(err)
-      }
-    }
-    fetchLogo()
-  }, [])
 
   const handleCategoryClick = (e, cat) => {
     if (cat.subcategories && cat.subcategories.length > 0) {
@@ -86,7 +73,6 @@ const Header = () => {
     <div className="w-full flex flex-col font-sans">
       <BreakingTicker />
       <HeaderTop 
-        logo={logo} 
         searchTerm={searchTerm} 
         setSearchTerm={setSearchTerm} 
         handleSubmit={handleSubmit} 

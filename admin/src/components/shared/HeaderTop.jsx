@@ -22,18 +22,10 @@ const HeaderTop = ({
   return (
     <header className="bg-white border-b border-gray-200 py-4 shadow-sm w-full">
       <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-4 gap-4">
-        {/* News18 India Styled Logo */}
+        {/* Newpulse Styled Logo */}
         <Link to="/" className="transition-transform duration-200 hover:scale-[1.02]">
-          <div className="flex items-center font-extrabold tracking-tighter text-3xl select-none">
-            {logo ? (
-              <img src={logo} alt="Logo" className="h-10 object-contain" />
-            ) : (
-              <>
-                <span className="bg-[#E1261C] text-white px-3.5 py-1 rounded-l text-2xl font-black">NEWS</span>
-                <span className="bg-[#0A2240] text-white px-3.5 py-1 rounded-r border-l border-white/10 text-2xl font-black">18</span>
-                <span className="text-[#0A2240] ml-2 font-black italic text-2xl tracking-tight">INDIA</span>
-              </>
-            )}
+          <div className="flex items-center select-none">
+            <img src="/logo.svg" alt="New Pulse Logo" className="h-10 md:h-12 object-contain" />
           </div>
         </Link>
 

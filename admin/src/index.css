@@ -96,15 +96,17 @@
 
 /* Crimson Pro Font Headlines Class */
 .crimson-headline {
-  font-family: 'Crimson Pro', serif !important;
+  font-family: 'Crimson Pro', 'Nirmala UI', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   font-weight: 700 !important;
   font-style: normal !important;
-  color: rgb(51, 51, 51);
+  line-height: 1.38 !important;
+  color: #0A2240;
 }
 
 .card-headline {
-  font-family: 'Crimson Pro', serif !important;
+  font-family: 'Crimson Pro', 'Nirmala UI', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   font-weight: 700 !important;
+  line-height: 1.35 !important;
   color: rgb(51, 51, 51);
 }
 
@@ -144,6 +146,45 @@
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
 }
 
+/* In-Article Custom Figure / Image Blot Styling */
+figure.article-image-figure,
+.post-content figure,
+.live-preview-content figure,
+.ql-editor figure {
+  display: block;
+  margin: 1.75rem auto;
+  text-align: center;
+  max-width: 100%;
+  clear: both;
+}
+
+figure.article-image-figure img,
+.post-content figure img,
+.live-preview-content figure img,
+.ql-editor figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.08), 0 2px 6px -2px rgba(0, 0, 0, 0.04);
+  object-fit: cover;
+  transition: transform 0.25s ease;
+}
+
+figure.article-image-figure figcaption,
+.post-content figure figcaption,
+.live-preview-content figure figcaption,
+.ql-editor figure figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: #64748b;
+  font-style: italic;
+  font-weight: 500;
+  text-align: center;
+}
+
 .img-rounded {
   border-radius: 16px !important;
 }
@@ -157,3 +198,109 @@
   scrollbar-width: none;
 }
 
+/* ============================================
+   RESPONSIVE RICH TEXT TABLE STYLES (.post-content, .prose, .ql-editor)
+   ============================================ */
+.post-content,
+.live-preview-content,
+.prose {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.post-content table,
+.live-preview-content table,
+.prose table {
+  width: 100% !important;
+  max-width: 100%;
+  margin: 1.5rem 0;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  text-align: left;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  display: table;
+}
+
+@media (max-width: 768px) {
+  .post-content,
+  .live-preview-content {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .post-content table,
+  .live-preview-content table {
+    display: table;
+    min-width: 500px;
+  }
+}
+
+.post-content th,
+.live-preview-content th,
+.prose th {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  font-weight: 700;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  text-transform: capitalize;
+}
+
+.post-content td,
+.live-preview-content td,
+.prose td {
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.post-content tr:nth-child(even),
+.live-preview-content tr:nth-child(even),
+.prose tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.post-content tr:hover,
+.live-preview-content tr:hover,
+.prose tr:hover {
+  background-color: #f1f5f9;
+}
+
+/* In-Editor Quill Table Styles */
+.ql-editor table.article-table,
+.ql-editor table {
+  width: 100% !important;
+  max-width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  display: table;
+  table-layout: auto;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.ql-editor table.article-table th,
+.ql-editor table.article-table td,
+.ql-editor table th,
+.ql-editor table td {
+  border: 1px solid #cbd5e1;
+  padding: 8px 12px;
+  min-width: 60px;
+  outline: none;
+}
+
+.ql-editor table.article-table th,
+.ql-editor table th {
+  background-color: #f1f5f9;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.ql-editor table.article-table td:focus,
+.ql-editor table.article-table th:focus {
+  background-color: #eff6ff;
+  border-color: #3b82f6;
+}

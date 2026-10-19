@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
-import translate from 'translate';
 
-translate.engine = 'google';
+// Dynamic lazy import for translation engine — avoids loading heavy translation library on initial page load
+let translateLib = null;
+const getTranslate = async () => {
+  if (!translateLib) {
+    const mod = await import('translate');
+    translateLib = mod.default || mod;
+    translateLib.engine = 'google';
+  }
+  return translateLib;
+};
 
 // Simple in-memory cache to avoid duplicate requests to the translation API
 const translationCache = {};
@@ -71,8 +79,9 @@ export const useTranslation = (text, language) => {
       }
 
       try {
-        // Fetch translation
-        const result = await translate(text, { to: langCode });
+        // Fetch translation with dynamic library loader
+        const translator = await getTranslate();
+        const result = await translator(text, { to: langCode });
         translationCache[cacheKey] = result;
         if (isMounted) setTranslatedText(result);
       } catch (err) {

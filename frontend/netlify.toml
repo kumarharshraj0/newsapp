@@ -7,6 +7,36 @@
   function = "og-meta"
 
 [[redirects]]
+  from = "/sitemap.xml"
+  to = "https://newsapi.newpulse.in/sitemap.xml"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/news-sitemap.xml"
+  to = "https://newsapi.newpulse.in/news-sitemap.xml"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/sitemap-news.xml"
+  to = "https://newsapi.newpulse.in/news-sitemap.xml"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/rss.xml"
+  to = "https://newsapi.newpulse.in/rss.xml"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/feed"
+  to = "https://newsapi.newpulse.in/feed"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

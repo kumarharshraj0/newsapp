@@ -5,8 +5,6 @@ import { getCategoryUrl } from "@/lib/utils"
 import axios from "axios";
 const Footer = () => {
   const [categories, setCategories] = React.useState([])
-  const [logo, setLogo] = React.useState(null)
-
   React.useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -19,18 +17,7 @@ const Footer = () => {
         console.error("Failed to fetch footer categories: ", error)
       }
     }
-    const fetchLogo = async () => {
-      try {
-        const res = await axios.get("/api/settings/logo")
-        if (res.data.success && res.data.setting) {
-          setLogo(res.data.setting.value)
-        }
-      } catch (err) {
-        console.log("Failed to fetch logo: ", err)
-      }
-    }
     fetchCategories()
-    fetchLogo()
   }, [])
 
   return (
@@ -39,19 +26,11 @@ const Footer = () => {
         
         {/* Brand Information */}
         <div className="flex flex-col gap-3">
-          <div className="flex items-center font-extrabold tracking-tighter text-2xl select-none mb-2">
-            {logo ? (
-              <img src={logo} alt="Site Logo" className="h-10 object-contain" />
-            ) : (
-              <>
-                <span className="bg-[#E1261C] text-white px-2.5 py-0.5 rounded-l text-xl font-black">NEWS</span>
-                <span className="bg-white text-[#0A2240] px-2.5 py-0.5 rounded-r border-l border-gray-200 text-xl font-black">18</span>
-                <span className="text-white ml-2 font-black italic text-xl tracking-tight">INDIA</span>
-              </>
-            )}
+          <div className="flex items-center select-none mb-2">
+            <img src="/logo-light.svg" alt="New Pulse Logo" className="h-10 md:h-12 object-contain" />
           </div>
           <p className="text-gray-300 text-xs md:text-sm leading-relaxed">
-            News18 India is committed to delivering the most reliable, accurate, and prompt news reporting from across the country and the globe. Stay informed, stay ahead.
+            New Pulse Editorial & Admin Dashboard. Manage breaking news, live coverage, categories, and editorial staff.
           </p>
         </div>
 
@@ -85,7 +64,7 @@ const Footer = () => {
             Express Towers, Nariman Point, Mumbai, India
           </p>
           <p className="text-gray-300 text-xs md:text-sm mb-1">
-            Email: contact@news18india.com
+            Email: contact@newpulse.in
           </p>
           <p className="text-gray-300 text-xs md:text-sm">
             Phone: +91 22 4001 9000
@@ -112,7 +91,7 @@ const Footer = () => {
         </div>
 
         <p className="mt-2">
-          &copy; {new Date().getFullYear()} News18 India. All rights reserved.
+          &copy; {new Date().getFullYear()} Newpulse. All rights reserved.
         </p>
       </div>
     </footer>

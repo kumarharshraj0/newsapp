@@ -17,6 +17,7 @@ const DashboardSEO = () => {
     metaDescription: "",
     keywords: "",
     canonicalUrl: "",
+    metaRobots: "index, follow, max-image-preview:large",
     schemaScript: "",
   })
 
@@ -53,6 +54,7 @@ const DashboardSEO = () => {
           metaDescription: res.data.metaDescription || "",
           keywords: res.data.keywords || "",
           canonicalUrl: res.data.canonicalUrl || "",
+          metaRobots: res.data.metaRobots || "index, follow, max-image-preview:large",
           schemaScript: res.data.schemaScript || "",
         })
       } else {
@@ -63,6 +65,7 @@ const DashboardSEO = () => {
           metaDescription: "",
           keywords: "",
           canonicalUrl: "",
+          metaRobots: "index, follow, max-image-preview:large",
           schemaScript: "",
         })
       }
@@ -134,7 +137,7 @@ const DashboardSEO = () => {
               <label className="block text-sm font-semibold mb-1">Meta Title</label>
               <Input
                 id="metaTitle"
-                placeholder="e.g. News18 India | Latest News"
+                placeholder="e.g. Newpulse | Latest News, Breaking News"
                 value={formData.metaTitle}
                 onChange={handleChange}
                 disabled={loading}
@@ -173,6 +176,36 @@ const DashboardSEO = () => {
                 onChange={handleChange}
                 disabled={loading}
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-1 flex items-center justify-between">
+                <span>Robots Meta Tag</span>
+                <span className="text-xs text-gray-500 font-normal">e.g. index, follow, max-image-preview:large</span>
+              </label>
+              <Input
+                id="metaRobots"
+                placeholder="index, follow, max-image-preview:large"
+                value={formData.metaRobots || ""}
+                onChange={handleChange}
+                disabled={loading}
+              />
+              <div className="flex flex-wrap gap-2 mt-1.5">
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, metaRobots: "index, follow, max-image-preview:large" })}
+                  className="text-xs bg-slate-200 hover:bg-slate-300 text-slate-800 px-2.5 py-1 rounded transition-colors"
+                >
+                  Index, Follow (Recommended)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, metaRobots: "noindex, nofollow" })}
+                  className="text-xs bg-slate-200 hover:bg-slate-300 text-slate-800 px-2.5 py-1 rounded transition-colors"
+                >
+                  Noindex, Nofollow
+                </button>
+              </div>
             </div>
             
             <div>

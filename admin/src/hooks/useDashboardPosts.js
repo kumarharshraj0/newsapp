@@ -42,6 +42,17 @@ export const useDashboardPosts = () => {
     }
   }, [fetchPosts, currentUser?.isAdmin])
 
+  // Automatically refresh posts when admin returns / focuses on this browser tab
+  useEffect(() => {
+    const handleFocus = () => {
+      if (currentUser?.isAdmin) {
+        fetchPosts()
+      }
+    }
+    window.addEventListener("focus", handleFocus)
+    return () => window.removeEventListener("focus", handleFocus)
+  }, [fetchPosts, currentUser?.isAdmin])
+
   // Reset page when filters change
   useEffect(() => {
     setPage(1)
@@ -106,6 +117,7 @@ export const useDashboardPosts = () => {
     handleDeletePost,
     handleApprove,
     handleReject,
+    fetchPosts,
   }
 }
 export default useDashboardPosts

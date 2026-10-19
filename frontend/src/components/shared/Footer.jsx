@@ -49,15 +49,15 @@ const Footer = () => {
   }, [])
 
   return (
-    <footer className="bg-[#0A2240] text-white border-t-4 border-[#E1261C] py-12">
+    <footer className="bg-[#0A2240] text-white border-t-4 border-[#E1261C] py-12 section-deferred">
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-5 gap-8">
-        
+
         {/* Brand Information */}
         <div className="flex flex-col gap-3 md:col-span-2">
           <div className="flex items-center font-extrabold tracking-tighter text-2xl select-none mb-2">
-              <div className="flex items-center">
-                <img src="/logo-light.svg" alt="News Pulse Logo" className="h-12 md:h-14 object-contain" />
-              </div>
+            <div className="flex items-center">
+              <img src="/logo-light.svg" alt="News Pulse Logo" width="180" height="48" className="h-12 md:h-14 w-auto object-contain" loading="lazy" />
+            </div>
           </div>
           <p className="text-gray-300 text-xs md:text-sm leading-relaxed whitespace-pre-wrap">
             {settings.about_text || "News Pulse is committed to delivering the most reliable, accurate, and prompt news reporting from across the country and the globe. Stay informed, stay ahead."}
@@ -105,7 +105,7 @@ const Footer = () => {
             {settings.contact_address || "Express Towers, Nariman Point, Mumbai, India"}
           </p>
           <p className="text-gray-300 text-xs md:text-sm mb-1">
-            Email: {settings.contact_email || "contact@insightdaily.com"}
+            Email: {settings.contact_email || " contact@newpulse.in"}
           </p>
           <p className="text-gray-300 text-xs md:text-sm">
             Phone: {settings.contact_phone || "+91 22 4001 9000"}

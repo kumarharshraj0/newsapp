@@ -36,7 +36,8 @@ const EditPost = () => {
 
         <PostImageUpload setFile={setFile} handleUploadImage={handleUploadImage}
           imageUploading={imageUploading} imageUploadError={imageUploadError} imageUrl={formData.image} 
-          handleRemoveImage={() => setFormData({ ...formData, image: "" })} />
+          handleRemoveImage={() => setFormData({ ...formData, image: "" })}
+          formData={formData} setFormData={setFormData} />
 
         <div className="flex flex-col gap-1">
           <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">

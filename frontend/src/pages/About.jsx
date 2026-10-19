@@ -3,9 +3,9 @@ import usePageSEO from "@/hooks/usePageSEO"
 
 const About = () => {
   usePageSEO("about", {
-    title: "About Us | News18 India",
-    description: "Learn more about the team behind News18 India, our mission to deliver fast and reliable news reporting, and our core editorial values.",
-    keywords: "about news18, news team, news18 india mission, journalism values"
+    title: "About Us | Newpulse",
+    description: "Learn more about the team behind Newpulse, our mission to deliver fast and reliable journalism, and our core editorial values.",
+    keywords: "about newpulse, news team, newpulse journalism, editorial values, unbiased news"
   })
 
   return (

@@ -4,9 +4,9 @@ export default function useSEO({ title, description, keywords, ogImage, ogType, 
   useEffect(() => {
     // 1. Title Tag
     if (title) {
-      document.title = `${title.replace(/News18 India|Insight Daily/g, "News Pulse")} | News Pulse`
+      document.title = `${title.replace(/News18 India|Insight Daily/g, "Newpulse")} | Newpulse`
     } else {
-      document.title = "News Pulse: Latest News, Breaking News, Global News"
+      document.title = "Newpulse: Latest News, Breaking News, Live Updates"
     }
 
     // Helper to set or create meta tag
@@ -29,15 +29,15 @@ export default function useSEO({ title, description, keywords, ogImage, ogType, 
     }
 
     // 2. Meta Description
-    setMetaTag("description", null, description || "News Pulse - Get the latest news, breaking news updates, and top stories on politics, sports, entertainment, business, and world news.")
+    setMetaTag("description", null, description || "Newpulse - Get the latest news, breaking news updates, and top stories on politics, sports, entertainment, business, and world news.")
 
     // 3. Keywords
-    setMetaTag("keywords", null, keywords || "news, breaking news, news pulse, world news, sports news, business news, tech news")
+    setMetaTag("keywords", null, keywords || "newpulse, news, breaking news, world news, sports news, business news, tech news")
 
     // 4. Open Graph Tags
-    const finalImage = ogImage || "https://newpulse.in/logo.png"
-    setMetaTag(null, "og:title", title ? `${title} | News Pulse` : "News Pulse: Latest News, Breaking News, Live Updates")
-    setMetaTag(null, "og:description", description || "News Pulse - Get the latest news, breaking news updates, and top stories.")
+    const finalImage = ogImage || "https://newpulse.in/logo.svg"
+    setMetaTag(null, "og:title", title ? `${title} | Newpulse` : "Newpulse: Latest News, Breaking News, Live Updates")
+    setMetaTag(null, "og:description", description || "Newpulse - Get the latest news, breaking news updates, and top stories.")
     setMetaTag(null, "og:image", finalImage)
     setMetaTag(null, "og:image:secure_url", finalImage)
     setMetaTag(null, "og:type", ogType || "website")
@@ -45,8 +45,8 @@ export default function useSEO({ title, description, keywords, ogImage, ogType, 
 
     // 5. Twitter Card Tags
     setMetaTag("twitter:card", null, "summary_large_image")
-    setMetaTag("twitter:title", null, title ? `${title} | News Pulse` : "News Pulse: Latest News, Breaking News, Live Updates")
-    setMetaTag("twitter:description", null, description || "News Pulse - Get the latest news, breaking news updates, and top stories.")
+    setMetaTag("twitter:title", null, title ? `${title} | Newpulse` : "Newpulse: Latest News, Breaking News, Live Updates")
+    setMetaTag("twitter:description", null, description || "Newpulse - Get the latest news, breaking news updates, and top stories.")
     setMetaTag("twitter:image", null, finalImage)
 
     // 6. LD-JSON Schema

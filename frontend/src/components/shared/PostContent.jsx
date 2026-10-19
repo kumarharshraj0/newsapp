@@ -15,18 +15,29 @@ const CommentFallback = () => (
 const PostContent = memo(({ post }) => {
   return (
     <div className="flex flex-col gap-6 mt-6">
-      <div className="rounded-2xl overflow-hidden shadow-md border border-gray-200 bg-gray-100 max-h-[550px]">
-        <OptimizedImage
-          src={post && post.image}
-          alt={post && post.title}
-          priority={true}
-          width={800}
-          height={450}
-          sizes="(max-width: 768px) 100vw, 800px"
-          widths={[640, 800, 1200]}
-          className="w-full h-full object-cover"
-        />
-      </div>
+      {post?.image && (
+        <figure className="rounded-2xl overflow-hidden shadow-md border border-gray-200 bg-gray-100">
+          <div className="max-h-[550px] w-full overflow-hidden">
+            <OptimizedImage
+              src={post.image}
+              alt={post.imageAlt || post.title || "Featured article image"}
+              priority={true}
+              width={800}
+              height={450}
+              sizes="(max-width: 768px) 100vw, 800px"
+              widths={[640, 800, 1200]}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          {post.imageCaption && (
+            <figcaption className="px-4 py-2 bg-slate-50 border-t border-gray-200 text-xs text-slate-500 italic flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <span className="font-semibold text-slate-700 not-italic">Photo:</span> {post.imageCaption}
+              </span>
+            </figcaption>
+          )}
+        </figure>
+      )}
 
       <div
         className="post-content text-[17px] leading-relaxed text-gray-800"

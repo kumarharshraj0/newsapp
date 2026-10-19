@@ -43,31 +43,109 @@ const DynamicPage = () => {
 
   useEffect(() => {
     if (page) {
-      document.title = page.metaTitle || `${page.title} | New Pulse`
+      const pageTitle = page.metaTitle || `${page.title} | Newpulse`
+      document.title = pageTitle
       
-      let metaDesc = document.querySelector('meta[name="description"]')
-      if (!metaDesc) {
-        metaDesc = document.createElement("meta")
-        metaDesc.name = "description"
-        document.head.appendChild(metaDesc)
+      const setMetaTag = (attr, key, content) => {
+        if (!content) return
+        let el = document.querySelector(`meta[${attr}="${key}"]`)
+        if (!el) {
+          el = document.createElement("meta")
+          el.setAttribute(attr, key)
+          document.head.appendChild(el)
+        }
+        el.setAttribute("content", content)
       }
-      metaDesc.content = page.metaDescription || ""
 
-      let metaKeywords = document.querySelector('meta[name="keywords"]')
-      if (!metaKeywords) {
-        metaKeywords = document.createElement("meta")
-        metaKeywords.name = "keywords"
-        document.head.appendChild(metaKeywords)
-      }
-      metaKeywords.content = page.keywords || ""
+      // Basic SEO Meta Tags
+      setMetaTag("name", "description", page.metaDescription || "")
+      setMetaTag("name", "keywords", page.keywords || "")
+      setMetaTag("name", "robots", page.metaRobots || "index, follow, max-image-preview:large")
 
+      // Canonical link (prevent localhost or invalid domains)
+      const canonicalHref = page.canonicalUrl && !page.canonicalUrl.includes("localhost")
+        ? page.canonicalUrl
+        : `https://newpulse.in/page/${page.slug}`
       let linkCanonical = document.querySelector('link[rel="canonical"]')
       if (!linkCanonical) {
         linkCanonical = document.createElement("link")
         linkCanonical.rel = "canonical"
         document.head.appendChild(linkCanonical)
       }
-      linkCanonical.href = page.canonicalUrl || window.location.href
+      linkCanonical.href = canonicalHref
+
+      // Open Graph Social Meta Tags
+      const ogImg = page.ogImage || "https://newpulse.in/banner.png"
+      setMetaTag("property", "og:title", pageTitle)
+      setMetaTag("property", "og:description", page.metaDescription || "")
+      setMetaTag("property", "og:url", canonicalHref)
+      setMetaTag("property", "og:site_name", "Newpulse")
+      setMetaTag("property", "og:type", "website")
+      setMetaTag("property", "og:image", ogImg)
+
+      // Twitter Cards
+      setMetaTag("name", "twitter:card", "summary_large_image")
+      setMetaTag("name", "twitter:title", pageTitle)
+      setMetaTag("name", "twitter:description", page.metaDescription || "")
+      setMetaTag("name", "twitter:image", ogImg)
+
+      // Inject LD-JSON Schema
+      let scriptTag = document.getElementById("page-dynamic-schema")
+      if (!scriptTag) {
+        scriptTag = document.createElement("script")
+        scriptTag.id = "page-dynamic-schema"
+        scriptTag.type = "application/ld+json"
+        document.head.appendChild(scriptTag)
+      }
+
+      if (page.schemaScript) {
+        scriptTag.textContent = page.schemaScript.replace(/<\/?script[^>]*>/gi, "").trim()
+      } else {
+        const defaultPageSchema = {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": canonicalHref,
+          "name": page.title,
+          "headline": page.metaTitle || page.title,
+          "description": page.metaDescription || "",
+          "url": canonicalHref,
+          "datePublished": page.createdAt || new Date().toISOString(),
+          "dateModified": page.updatedAt || page.createdAt || new Date().toISOString(),
+          "publisher": {
+            "@type": "NewsMediaOrganization",
+            "name": "Newpulse",
+            "url": "https://newpulse.in",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://newpulse.in/rectangular-logo.png"
+            }
+          },
+          "breadcrumb": {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://newpulse.in"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": page.title,
+                "item": canonicalHref
+              }
+            ]
+          }
+        }
+        scriptTag.textContent = JSON.stringify(defaultPageSchema)
+      }
+
+      return () => {
+        const s = document.getElementById("page-dynamic-schema")
+        if (s) s.remove()
+      }
     }
   }, [page])
 

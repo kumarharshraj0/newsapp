@@ -11,7 +11,7 @@ const PostCard = memo(({ post }) => {
   )
 
   return (
-    <div className="bg-white border border-gray-200 hover:border-gray-300 rounded-lg overflow-hidden flex flex-col w-full shadow-sm hover:shadow-md transition-all duration-300 mx-auto">
+    <div className="bg-white border border-gray-200 hover:border-gray-300 rounded-lg overflow-hidden flex flex-col w-full shadow-sm hover:shadow-md transition-all duration-300 mx-auto post-card-contain">
       
       {/* Cover Image with Category Badge */}
       <Link
@@ -24,6 +24,8 @@ const PostCard = memo(({ post }) => {
           width={420}
           height={248}
           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          widths={[320, 420, 520]}
+          quality={25}
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
         />
         <span className="absolute bottom-3 left-3 bg-[#E1261C] text-white text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full shadow">

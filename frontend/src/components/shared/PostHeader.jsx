@@ -34,7 +34,7 @@ const PostHeader = memo(({ post, author, currentUser, onLike }) => {
       </Link>
 
       {/* 3. HEADLINE */}
-      <h1 className="crimson-headline text-left text-3xl md:text-5xl font-extrabold text-[#0A2240] leading-tight mb-4">
+      <h1 className="crimson-headline text-left text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#0A2240] leading-[1.35] md:leading-[1.4] break-words mb-4">
         {post && post.title}
       </h1>
 

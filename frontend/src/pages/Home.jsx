@@ -13,9 +13,10 @@ const Home = () => {
   const { selectedLanguage } = useSelector((state) => state.language)
 
   usePageSEO("home", {
-    title: "News Pulse: Latest News, Breaking News, Global News",
-    description: "Read the latest news headlines and live updates on News Pulse.",
-    keywords: "news pulse, news, breaking news, politics news, sports news, global news",
+    title: "Newpulse: Latest News, Breaking News, Live Updates",
+    description: "Read the latest news headlines and live updates on Newpulse.",
+    keywords: "newpulse, news, breaking news, politics news, sports news, global news",
+    metaRobots: "index, follow, max-image-preview:large",
   })
 
   useEffect(() => {
@@ -46,9 +47,11 @@ const Home = () => {
         ) : (
           <>
             <HeroSection posts={homePosts} loading={homeLoading} getCategoryName={getCategoryName} />
-            <React.Suspense fallback={<div className="h-40 bg-gray-100 rounded-lg animate-pulse my-8"></div>}>
-              <CategorySections categories={categories} posts={homePosts} loading={homeLoading} />
-            </React.Suspense>
+            <div className="section-deferred">
+              <React.Suspense fallback={<div className="h-40 bg-gray-100 rounded-lg animate-pulse my-8"></div>}>
+                <CategorySections categories={categories} posts={homePosts} loading={homeLoading} />
+              </React.Suspense>
+            </div>
           </>
         )}
       </main>

@@ -8,27 +8,30 @@ const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || ""
 const GoogleAnalytics = () => {
   const location = useLocation()
 
-  // Initialize Google Analytics gtag.js script once
+  // Initialize Google Analytics gtag.js script once (if not already handled by index.html)
   useEffect(() => {
     if (!GA_MEASUREMENT_ID || GA_MEASUREMENT_ID === "G-XXXXXXXXXX") return
 
-    if (!document.getElementById("google-analytics-script")) {
-      const script = document.createElement("script")
-      script.id = "google-analytics-script"
-      script.async = true
-      script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`
-      document.head.appendChild(script)
-
-      window.dataLayer = window.dataLayer || []
-      function gtag() {
-        window.dataLayer.push(arguments)
-      }
-      window.gtag = gtag
-      gtag("js", new Date())
-      gtag("config", GA_MEASUREMENT_ID, {
-        send_page_view: false, // SPA route change handle karega
-      })
+    // If already set up in index.html, skip creating a duplicate script
+    if (window.gtag || document.getElementById("google-analytics-script") || document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) {
+      return
     }
+
+    const script = document.createElement("script")
+    script.id = "google-analytics-script"
+    script.async = true
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`
+    document.head.appendChild(script)
+
+    window.dataLayer = window.dataLayer || []
+    function gtag() {
+      window.dataLayer.push(arguments)
+    }
+    window.gtag = gtag
+    gtag("js", new Date())
+    gtag("config", GA_MEASUREMENT_ID, {
+      send_page_view: false, // SPA route change handle karega
+    })
   }, [])
 
   // Track page views on route / URL changes (Full SPA support)

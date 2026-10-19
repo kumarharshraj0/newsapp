@@ -10,12 +10,13 @@ import {
   AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
   AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "../ui/alert-dialog"
+import { Eye, RotateCw } from "lucide-react"
 import { useDashboardPosts } from "@/hooks/useDashboardPosts"
 
 const getFrontendPostUrl = (post) => {
   if (!post) return "#"
   const cat = post.category || "general"
-  const base = "http://localhost:5173"
+  const base = import.meta.env.PROD ? "https://newpulse.in" : "http://localhost:5173"
   if (post.subcategory && post.subcategory !== "all") {
     return `${base}/news/${cat}/${post.subcategory}/article/${post.slug}`
   }
@@ -52,6 +53,7 @@ const DashboardPosts = () => {
     handleDeletePost,
     handleApprove,
     handleReject,
+    fetchPosts,
   } = useDashboardPosts()
 
   const [categories, setCategories] = useState([])
@@ -109,6 +111,15 @@ const DashboardPosts = () => {
             onChange={(e) => setDate(e.target.value)}
             className="border border-gray-300 text-sm rounded-md px-3 py-2 bg-white text-gray-700 outline-none focus:ring-2 focus:ring-slate-500"
           />
+          <button 
+            type="button"
+            onClick={fetchPosts}
+            className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-md transition border border-gray-200"
+            title="Refresh articles and view counts"
+          >
+            <RotateCw className="w-3.5 h-3.5 text-slate-600" />
+            <span>Refresh</span>
+          </button>
         </div>
       </div>
 
@@ -124,6 +135,7 @@ const DashboardPosts = () => {
                   <TableHead className="w-[110px]">Date</TableHead>
                   <TableHead>Image</TableHead>
                   <TableHead>Title</TableHead>
+                  <TableHead className="text-center font-semibold text-gray-700">Views</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Subcategory</TableHead>
                   <TableHead>Status</TableHead>
@@ -133,7 +145,7 @@ const DashboardPosts = () => {
               {posts.map((post) => (
                 <TableBody className="divide-y" key={post._id}>
                   <TableRow>
-                    <TableCell className="text-xs text-gray-500">{new Date(post.updatedAt).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-xs text-gray-500">{new Date(post.createdAt || post.updatedAt).toLocaleDateString()}</TableCell>
                     <TableCell>
                       <Link to={`/update-post/${post._id}`}>
                         <img src={post.image} alt={post.title} className="w-20 h-12 object-cover bg-gray-500 rounded hover:opacity-80 transition" />
@@ -141,6 +153,12 @@ const DashboardPosts = () => {
                     </TableCell>
                     <TableCell className="max-w-[180px]">
                       <Link to={`/update-post/${post._id}`} className="font-medium hover:underline line-clamp-2 text-blue-700">{post.title}</Link>
+                    </TableCell>
+                    <TableCell className="text-center whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-sky-50 text-sky-700 border border-sky-200 rounded-full text-xs font-semibold shadow-xs">
+                        <Eye className="w-3.5 h-3.5 text-sky-600" />
+                        {(post.views || 0).toLocaleString()}
+                      </span>
                     </TableCell>
                     <TableCell><span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">{post.category || "—"}</span></TableCell>
                     <TableCell><span className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs font-medium">{post.subcategory || "—"}</span></TableCell>

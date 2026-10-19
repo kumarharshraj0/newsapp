@@ -2,8 +2,7 @@ import React from "react"
 import { Link } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { setLanguage } from "@/redux/language/languageSlice"
-import { FaSearch } from "react-icons/fa"
-import { Globe, LayoutDashboard, PenLine, ShieldCheck, LogOut } from "lucide-react"
+import { Globe, LayoutDashboard, PenLine, ShieldCheck, LogOut, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -19,29 +18,24 @@ const HeaderTop = ({ searchTerm, setSearchTerm, handleSubmit }) => {
 
   const handleSignout = async () => {
     try {
-      const res = await axios.post("/api/user/signout", {}, { validateStatus: () => true })
-      if (res.status >= 200 && res.status < 300) dispatch(signOutSuccess())
+      const res = await fetch("/api/user/signout", { method: "POST" })
+      if (res.ok) dispatch(signOutSuccess())
     } catch (error) { console.log(error) }
   }
 
-  const { settings } = useSettings()
-  const logo = settings?.logo
-
   return (
-    <header className="bg-white border-b border-gray-200 py-4 shadow-sm w-full">
+    <div className="w-full py-3 md:py-3.5">
       <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-4 gap-4">
         <Link to="/" className="transition-transform duration-200 hover:scale-[1.02]">
-          <div className="flex items-center font-extrabold tracking-tighter text-3xl select-none">
-              <div className="flex items-center">
-                <img src="/logo.svg" alt="News Pulse Logo" className="h-12 md:h-14 object-contain" />
-              </div>
+          <div className="flex items-center select-none">
+            <img src="/logo.svg" alt="New Pulse Logo" width="180" height="48" className="h-12 md:h-14 w-auto object-contain" fetchPriority="high" />
           </div>
         </Link>
 
         <form className="w-full md:max-w-md bg-gray-100 border border-gray-300 rounded-full px-4 py-2 flex items-center transition-all focus-within:bg-white focus-within:shadow-md" onSubmit={handleSubmit}>
           <input type="text" placeholder="Search news, topics, articles..." className="focus:outline-none bg-transparent w-full text-sm text-gray-800 placeholder-gray-500" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
           <button type="submit" aria-label="Search" className="p-1 hover:text-red-600 transition-colors">
-            <FaSearch className="text-gray-600 text-base" aria-hidden="true" />
+            <Search className="text-gray-600 w-4 h-4" aria-hidden="true" />
           </button>
         </form>
 
@@ -87,7 +81,7 @@ const HeaderTop = ({ searchTerm, setSearchTerm, handleSubmit }) => {
                 </DropdownMenuItem>
                 {currentUser.isAdmin && (
                   <DropdownMenuItem className="cursor-pointer hover:bg-gray-50 font-semibold text-blue-800">
-                    <a href="http://localhost:5174" target="_blank" rel="noreferrer" className="w-full flex items-center gap-2">
+                    <a href={import.meta.env.PROD ? "https://admin.newpulse.in" : "http://localhost:5174"} target="_blank" rel="noreferrer" className="w-full flex items-center gap-2">
                       <ShieldCheck className="w-4 h-4 text-purple-600" /> Admin Panel
                     </a>
                   </DropdownMenuItem>
@@ -105,7 +99,7 @@ const HeaderTop = ({ searchTerm, setSearchTerm, handleSubmit }) => {
           )}
         </div>
       </div>
-    </header>
+    </div>
   )
 }
 

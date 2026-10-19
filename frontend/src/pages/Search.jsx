@@ -115,8 +115,8 @@ const Search = () => {
     : "search"
 
   usePageSEO(pageIdentifier, { 
-    title: seoTitle + " | News18 India", 
-    description: `Read latest articles on ${seoTitle.toLowerCase()} on News18 India.` 
+    title: `${seoTitle} | Newpulse`, 
+    description: `Read latest breaking news and updates on ${seoTitle.toLowerCase()} on Newpulse.` 
   })
 
   return (

@@ -1,2 +1,7 @@
-# Netlify redirects file for SPA routing (React Router)
-/* /index.html   200
+# Netlify redirects file for dynamic sitemaps, RSS feeds and SPA routing
+/sitemap.xml       https://newsapi.newpulse.in/sitemap.xml       200!
+/news-sitemap.xml  https://newsapi.newpulse.in/news-sitemap.xml  200!
+/sitemap-news.xml  https://newsapi.newpulse.in/news-sitemap.xml  200!
+/rss.xml           https://newsapi.newpulse.in/rss.xml           200!
+/feed              https://newsapi.newpulse.in/feed              200!
+/*                 /index.html                                   200

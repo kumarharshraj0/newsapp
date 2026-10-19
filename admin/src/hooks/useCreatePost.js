@@ -4,7 +4,8 @@ import { useToast } from "@/hooks/use-toast"
 import { getFilePreview, uploadFile } from "@/lib/appwrite/uploadImage"
 import axios from "axios"
 
-export const useCreatePost = () => {
+export const useCreatePost = (options = {}) => {
+  const { onOpenTableModal } = options
   const { toast } = useToast()
   const navigate = useNavigate()
   const quillRef = useRef(null)
@@ -58,7 +59,17 @@ export const useCreatePost = () => {
   const clearDraft = useCallback(() => {
     try {
       localStorage.removeItem("news_article_draft")
-      setFormData({ language: "english", title: "", content: "", image: "", slug: "", category: "", subcategory: "" })
+      setFormData({
+        language: "english",
+        title: "",
+        content: "",
+        image: "",
+        imageAlt: "",
+        imageCaption: "",
+        slug: "",
+        category: "",
+        subcategory: "",
+      })
       setHasDraftRestored(false)
       toast({ title: "Draft discarded." })
     } catch (e) {}
@@ -99,28 +110,19 @@ export const useCreatePost = () => {
     }
   }
 
-  const handleEditorImageUpload = useCallback(() => {
-    const input = document.createElement("input")
-    input.setAttribute("type", "file")
-    input.setAttribute("accept", "image/*")
-    input.click()
+  const onOpenTableModalRef = useRef(onOpenTableModal)
+  useEffect(() => {
+    onOpenTableModalRef.current = onOpenTableModal
+  }, [onOpenTableModal])
 
-    input.onchange = async () => {
-      const selectedFile = input.files[0]
-      if (selectedFile) {
-        try {
-          toast({ title: "Uploading inline image..." })
-          const uploadedFile = await uploadFile(selectedFile)
-          const url = getFilePreview(uploadedFile.$id)
-          const quill = quillRef.current.getEditor()
-          const range = quill.getSelection(true)
-          quill.insertEmbed(range ? range.index : 0, "image", url)
-          toast({ title: "Inline image inserted successfully!" })
-        } catch (err) {
-          toast({ title: "Failed to upload image to article body" })
-        }
-      }
-    }
+  const onOpenImageModalRef = useRef(options.onOpenImageModal)
+  useEffect(() => {
+    onOpenImageModalRef.current = options.onOpenImageModal
+  }, [options.onOpenImageModal])
+
+  const toastRef = useRef(toast)
+  useEffect(() => {
+    toastRef.current = toast
   }, [toast])
 
   const modules = useMemo(
@@ -133,14 +135,20 @@ export const useCreatePost = () => {
           ["link", "image"],
           ["clean"],
         ],
-        handlers: { image: handleEditorImageUpload },
+        handlers: {
+          image: () => {
+            if (onOpenImageModalRef.current) {
+              onOpenImageModalRef.current()
+            }
+          },
+        },
       },
       imageResize: {
         parallax: true,
         modules: ["Resize", "DisplaySize", "Toolbar"],
       },
     }),
-    [handleEditorImageUpload]
+    []
   )
 
   const handleSubmit = async (e) => {

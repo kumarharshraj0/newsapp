@@ -27,7 +27,7 @@ const CreatePost = () => {
   return (
     <div className="p-4 max-w-3xl mx-auto min-h-screen my-6">
       <div className="bg-blue-50 border-l-4 border-blue-600 p-4 mb-6 rounded shadow-sm text-sm text-blue-800 font-medium">
-        ℹ️ <strong>Note for Authors:</strong> Any article submitted will be reviewed by an admin before being published on News18 India.
+        ℹ️ <strong>Note for Authors:</strong> Any article submitted will be reviewed by an editorial admin before being published on Newpulse.
       </div>
 
       <h1 className="text-center text-3xl my-5 font-black text-[#0A2240] border-b-2 border-[#E1261C] pb-2">
@@ -40,7 +40,8 @@ const CreatePost = () => {
 
         <PostImageUpload setFile={setFile} handleUploadImage={handleUploadImage}
           imageUploading={imageUploading} imageUploadError={imageUploadError} imageUrl={formData.image} 
-          handleRemoveImage={() => setFormData({ ...formData, image: "" })} />
+          handleRemoveImage={() => setFormData({ ...formData, image: "" })}
+          formData={formData} setFormData={setFormData} />
 
         <div className="flex flex-col gap-1">
           <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">

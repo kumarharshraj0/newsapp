@@ -2,15 +2,11 @@ import React, { Suspense, useEffect } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import Header from "./components/shared/Header"
 
-// Lazy load below the fold components
-const Footer = React.lazy(() => import("./components/shared/Footer"))
-import { Toaster } from "./components/ui/toaster"
-import PrivateRoute from "./components/shared/PrivateRoute"
-import ScrollToTop from "./components/shared/ScrollToTop"
-import GoogleAnalytics from "./components/shared/GoogleAnalytics"
-import axios from "axios"
-
+// Eager load primary landing page for instant FCP & zero network waterfalls
 import Home from "./pages/Home"
+
+// Lazy load below the fold components & heavy routes
+const Footer = React.lazy(() => import("./components/shared/Footer"))
 const SignInForm = React.lazy(() => import("./auth/forms/SignInForm"))
 const SignUpForm = React.lazy(() => import("./auth/forms/SignUpForm"))
 const Dashboard = React.lazy(() => import("./pages/Dashboard"))
@@ -22,11 +18,10 @@ const EditPost = React.lazy(() => import("./pages/EditPost"))
 const DynamicPage = React.lazy(() => import("./pages/DynamicPage"))
 const PublisherProfile = React.lazy(() => import("./pages/PublisherProfile"))
 
-const FallbackLoader = () => (
-  <div className="flex justify-center items-center min-h-screen">
-    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#E1261C]"></div>
-  </div>
-)
+import { Toaster } from "./components/ui/toaster"
+import PrivateRoute from "./components/shared/PrivateRoute"
+import ScrollToTop from "./components/shared/ScrollToTop"
+import GoogleAnalytics from "./components/shared/GoogleAnalytics"
 
 const App = () => {
 
@@ -35,7 +30,7 @@ const App = () => {
       <ScrollToTop />
       <GoogleAnalytics />
       <Header />
-      <Suspense fallback={<FallbackLoader />}>
+      <Suspense fallback={<div className="min-h-screen bg-background" />}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />

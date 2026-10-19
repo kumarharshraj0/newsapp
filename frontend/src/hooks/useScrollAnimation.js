@@ -1,38 +1,38 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 
 /**
  * useScrollAnimation hook
- * Returns a ref and a boolean `isVisible`.
- * When the element enters the viewport, isVisible becomes true.
+ * Uses IntersectionObserver to directly add 'is-visible' class on intersection.
+ * Completely eliminates synchronous layout reading (getBoundingClientRect / offsetTop)
+ * and bypasses React state re-renders to prevent Layout Thrashing.
  */
 const useScrollAnimation = (options = {}) => {
   const ref = useRef(null)
-  const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          // Unobserve after first trigger (animate once)
-          observer.unobserve(entry.target)
-        }
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible")
+            observer.unobserve(entry.target)
+          }
+        })
       },
       {
-        threshold: options.threshold || 0.12,
-        rootMargin: options.rootMargin || "0px 0px -40px 0px",
+        threshold: options.threshold || 0.1,
+        rootMargin: options.rootMargin || "0px",
       }
     )
 
-    const el = ref.current
-    if (el) observer.observe(el)
-
-    return () => {
-      if (el) observer.unobserve(el)
-    }
+    observer.observe(el)
+    return () => observer.disconnect()
   }, [options.threshold, options.rootMargin])
 
-  return [ref, isVisible]
+  return [ref]
 }
 
 export default useScrollAnimation

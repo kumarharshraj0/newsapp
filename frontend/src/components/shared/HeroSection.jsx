@@ -3,7 +3,6 @@ import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Flame } from "lucide-react"
 import { getPostUrl, formatDate, timeAgo } from "@/lib/utils"
-import ScrollReveal from "@/components/shared/ScrollReveal"
 import { FeaturedSkeleton, TrendingSkeleton } from "@/components/shared/Skeletons"
 import OptimizedImage from "@/components/shared/OptimizedImage"
 import { Translate } from "@/hooks/useTranslation"
@@ -40,19 +39,20 @@ const HeroSection = memo(({ posts, loading, getCategoryName }) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
       {featuredPost && (
-        <ScrollReveal animation="animate-slide-left" className="lg:col-span-2 flex flex-col bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow relative">
-          <Link to={getPostUrl(featuredPost)} className="block relative aspect-video overflow-hidden">
+        <div className="lg:col-span-2 flex flex-col bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow relative">
+          <Link to={getPostUrl(featuredPost)} className="block relative w-full aspect-[16/9] overflow-hidden bg-slate-200 dark:bg-slate-800">
             <OptimizedImage
               key={featuredPost._id}
               src={featuredPost.image}
               alt={featuredPost.title}
               priority={true}
+              loading="eager"
               width={800}
               height={450}
-              sizes="(max-width: 768px) 100vw, 66vw"
-              widths={[320, 800, 1200]}
+              sizes="(max-width: 768px) 96vw, 66vw"
+              widths={[360, 480, 720, 960]}
               quality={20}
-              className="w-full h-full object-cover animate-fade is-visible transition-transform duration-500 hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
             />
             <span className="absolute top-4 left-4 bg-[#E1261C] text-white text-xs font-black capitalize px-3 py-1 rounded shadow-md tracking-wider"><Translate text="Featured" language={selectedLanguage} /></span>
           </Link>
@@ -63,7 +63,7 @@ const HeroSection = memo(({ posts, loading, getCategoryName }) => {
               <span>{formatDate(featuredPost.createdAt, "short")}</span>
             </div>
             <Link to={getPostUrl(featuredPost)}>
-              <h2 className="crimson-headline hover:text-[#E1261C] transition-colors mb-4 line-clamp-2">{featuredPost.title}</h2>
+              <h1 className="crimson-headline hover:text-[#E1261C] transition-colors mb-4 line-clamp-2 text-2xl md:text-3xl font-extrabold">{featuredPost.title}</h1>
             </Link>
             <div className="text-gray-600 text-sm md:text-base mb-6 line-clamp-3 post-content" dangerouslySetInnerHTML={{ __html: featuredPost.content }} />
             <Link to={getPostUrl(featuredPost)} className="mt-auto">
@@ -86,10 +86,10 @@ const HeroSection = memo(({ posts, loading, getCategoryName }) => {
               ))}
             </div>
           )}
-        </ScrollReveal>
+        </div>
       )}
 
-      <ScrollReveal animation="animate-slide-right" delay="delay-200" className="flex flex-col bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+      <div className="flex flex-col bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
         <div className="flex items-center gap-2 pb-4 mb-4 border-b border-gray-200">
           <Flame className="h-5 w-5 text-[#E1261C]" />
           <h3 className="text-lg font-black text-[#0A2240] capitalize tracking-wide"><Translate text="Trending Headlines" language={selectedLanguage} /></h3>
@@ -121,7 +121,7 @@ const HeroSection = memo(({ posts, loading, getCategoryName }) => {
             </div>
           ))}
         </div>
-      </ScrollReveal>
+      </div>
     </div>
   )
 })

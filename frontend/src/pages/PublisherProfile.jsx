@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { fetchPublisherPosts, fetchMorePublisherPosts, clearPublisherPosts } from "@/redux/posts/postsSlice"
 import PublisherHeader from "@/components/shared/PublisherHeader"
+import usePageSEO from "@/hooks/usePageSEO"
 
 const PublisherProfile = () => {
   const { id } = useParams()
@@ -49,6 +50,13 @@ const PublisherProfile = () => {
   const handleShowMore = () => {
     dispatch(fetchMorePublisherPosts({ userId: id, sort, startIndex: posts.length, limit: 6 }))
   }
+
+  usePageSEO(`publisher_${id}`, {
+    title: publisher?.username ? `${publisher.username} - Journalist Profile | Newpulse` : "Publisher Profile | Newpulse",
+    description: `Read verified reporting, breaking news stories, and articles written by ${publisher?.username || "our editorial team"} on Newpulse.`,
+    canonicalUrl: `https://newpulse.in/publisher/${id}`,
+    ogImage: publisher?.profilePicture || "https://newpulse.in/rectangular-logo.png"
+  })
 
   if (loading) {
     return (

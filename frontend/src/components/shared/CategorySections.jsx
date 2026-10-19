@@ -12,6 +12,17 @@ import PopularPostsSidebar from "@/components/shared/PopularPostsSidebar"
 const CategorySections = memo(({ categories, posts, loading }) => {
   const { selectedLanguage } = useSelector((state) => state.language)
 
+  // Progressive chunk render: render initial 2 categories immediately, then defer remaining categories to break up Long Tasks
+  const [visibleCategoriesCount, setVisibleCategoriesCount] = React.useState(2)
+
+  React.useEffect(() => {
+    if (categories.length <= 2) return
+    const timer = setTimeout(() => {
+      setVisibleCategoriesCount(categories.length)
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [categories.length])
+
   // useMemo: build a category→posts lookup map once when posts change
   const postsByCategory = useMemo(() => {
     const map = {}
@@ -51,7 +62,7 @@ const CategorySections = memo(({ categories, posts, loading }) => {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-12">
       {/* Left / Center Main Content (matches reference: 2 large cards on top, followed by 2-column small cards) */}
       <div className="lg:col-span-8 flex flex-col gap-12">
-        {categories.map((cat, catIdx) => {
+        {categories.slice(0, visibleCategoriesCount).map((cat, catIdx) => {
           const categoryPosts = postsByCategory[cat.slug] || []
           if (!categoryPosts.length) return null
 
@@ -64,7 +75,7 @@ const CategorySections = memo(({ categories, posts, loading }) => {
               animation="animate-on-scroll"
               delay={catIdx === 0 ? "" : catIdx === 1 ? "delay-100" : "delay-200"}
               as="section"
-              className="bg-white border border-gray-200 rounded-lg p-5 md:p-6 shadow-sm"
+              className={`bg-white border border-gray-200 rounded-lg p-5 md:p-6 shadow-sm ${catIdx > 0 ? "section-deferred" : ""}`}
             >
               {/* Category Header */}
               <div className="border-b border-gray-150 pb-3 mb-6 flex justify-between items-center">
@@ -85,13 +96,16 @@ const CategorySections = memo(({ categories, posts, loading }) => {
               {/* 1. Top Two Featured Column Cards (Exactly matching screenshot) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
                 {topTwoPosts.map((post) => (
-                  <div key={post._id} className="flex flex-col group">
+                  <div key={post._id} className="flex flex-col group post-card-container">
                     <Link to={getPostUrl(post)} className="aspect-[16/10] overflow-hidden rounded bg-gray-100 mb-3 block">
                       <OptimizedImage
                         src={post.image}
                         alt={post.title}
                         width={420}
                         height={260}
+                        sizes="(max-width: 640px) 94vw, 420px"
+                        widths={[320, 420, 520]}
+                        quality={25}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </Link>
@@ -112,7 +126,7 @@ const CategorySections = memo(({ categories, posts, loading }) => {
               {remainingPosts.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 pt-4 border-t border-gray-100">
                   {remainingPosts.map((post) => (
-                    <div key={post._id} className="flex gap-3 items-center group">
+                    <div key={post._id} className="flex gap-3 items-center group post-card-container">
                       <Link
                         to={getPostUrl(post)}
                         className="shrink-0 w-24 h-18 sm:w-28 sm:h-20 rounded overflow-hidden bg-gray-100 block"
@@ -122,6 +136,9 @@ const CategorySections = memo(({ categories, posts, loading }) => {
                           alt={post.title}
                           width={112}
                           height={80}
+                          sizes="(max-width: 640px) 112px, 120px"
+                          widths={[112, 160, 224]}
+                          quality={25}
                           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       </Link>

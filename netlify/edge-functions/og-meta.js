@@ -135,6 +135,11 @@ export default async function handler(request, context) {
       newMetaTags += `\n    <meta name="twitter:description" content="${cleanDesc}" />`;
       newMetaTags += `\n    <meta name="description" content="${cleanDesc}" />`;
     }
+    const keywords = post.keywords || (post.tags && Array.isArray(post.tags) ? post.tags.join(", ") : "");
+    if (keywords) {
+      const cleanKeywords = String(keywords).replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      newMetaTags += `\n    <meta name="keywords" content="${cleanKeywords}" />`;
+    }
     if (canonicalUrl) {
       newMetaTags += `\n    <meta property="og:url" content="${canonicalUrl}" />`;
       newMetaTags += `\n    <link rel="canonical" href="${canonicalUrl}" />`;

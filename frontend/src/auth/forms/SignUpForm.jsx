@@ -32,7 +32,7 @@ const formSchema = z.object({
 const SignUpForm = () => {
   useSEO({
     title: "Sign Up",
-    description: "Create a News18 India account to bookmark, like, comment, and engage with top news stories.",
+    description: "Create a Newpulse account to bookmark, like, comment, and engage with top news stories.",
   })
 
   const { toast } = useToast()
@@ -105,7 +105,7 @@ const SignUpForm = () => {
               Create an Account
             </h2>
             <p className="text-gray-500 text-sm font-medium">
-              Welcome to News18 India, please provide your details
+              Welcome to Newpulse, please provide your details
             </p>
           </div>
 

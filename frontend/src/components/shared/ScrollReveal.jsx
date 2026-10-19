@@ -1,14 +1,8 @@
-import React from "react"
-import useScrollAnimation from "@/hooks/useScrollAnimation"
+import React, { useEffect, useRef } from "react"
 
 /**
- * ScrollReveal — wraps any element and animates it on scroll.
- *
- * Props:
- *   animation: "animate-on-scroll" | "animate-slide-left" | "animate-slide-right" | "animate-fade" | "animate-scale"
- *   delay:     "delay-100" | "delay-200" | "delay-300" | "delay-400" | "delay-500"
- *   className: extra classes
- *   as:        HTML tag to render (default "div")
+ * ScrollReveal — wraps any element and animates it on scroll using IntersectionObserver.
+ * Directly toggles 'is-visible' on DOM to avoid React re-renders and layout thrashing.
  */
 const ScrollReveal = ({
   children,
@@ -16,14 +10,34 @@ const ScrollReveal = ({
   delay = "",
   className = "",
   as: Tag = "div",
-  threshold,
+  threshold = 0.1,
 }) => {
-  const [ref, isVisible] = useScrollAnimation({ threshold })
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible")
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold }
+    )
+
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [threshold])
 
   return (
     <Tag
       ref={ref}
-      className={`${animation} ${delay} ${isVisible ? "is-visible" : ""} ${className}`}
+      className={`${animation} ${delay} ${className}`}
     >
       {children}
     </Tag>
