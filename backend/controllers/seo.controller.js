@@ -59,10 +59,9 @@ export const generateSitemap = async (req, res, next) => {
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`
 
-    // 1. Core Static Pages
+    // 1. Core Static Pages (excluding search pages per Google Search Essentials)
     const staticPages = [
       { loc: `${baseUrl}/`, priority: "1.0", changefreq: "hourly" },
-      { loc: `${baseUrl}/search`, priority: "0.8", changefreq: "daily" },
       { loc: `${baseUrl}/about`, priority: "0.6", changefreq: "monthly" },
     ]
 
@@ -72,29 +71,37 @@ export const generateSitemap = async (req, res, next) => {
 
     // 2. Categories & Subcategories
     categories.forEach((cat) => {
-      xml += `  <url>\n    <loc>${baseUrl}/news/${cat.slug}</loc>\n    <changefreq>hourly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`
-      if (cat.subcategories && Array.isArray(cat.subcategories)) {
-        cat.subcategories.forEach((sub) => {
-          xml += `  <url>\n    <loc>${baseUrl}/news/${cat.slug}/${sub.slug}</loc>\n    <changefreq>hourly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`
-        })
+      if (cat.slug) {
+        xml += `  <url>\n    <loc>${baseUrl}/news/${encodeURI(cat.slug)}</loc>\n    <changefreq>hourly</changefreq>\n    <priority>0.8</priority>\n  </url>\n`
+        if (cat.subcategories && Array.isArray(cat.subcategories)) {
+          cat.subcategories.forEach((sub) => {
+            if (sub.slug) {
+              xml += `  <url>\n    <loc>${baseUrl}/news/${encodeURI(cat.slug)}/${encodeURI(sub.slug)}</loc>\n    <changefreq>hourly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`
+            }
+          })
+        }
       }
     })
 
     // 3. Dynamic Policy & Info Pages
     pages.forEach((page) => {
-      const lastmod = page.updatedAt ? new Date(page.updatedAt).toISOString() : new Date().toISOString()
-      xml += `  <url>\n    <loc>${baseUrl}/page/${page.slug}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>\n`
+      if (page.slug) {
+        const lastmod = page.updatedAt ? new Date(page.updatedAt).toISOString() : new Date().toISOString()
+        xml += `  <url>\n    <loc>${baseUrl}/page/${encodeURI(page.slug)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>\n`
+      }
     })
 
     // 4. All News Articles
     posts.forEach((post) => {
-      const lastmod = post.updatedAt ? new Date(post.updatedAt).toISOString() : (post.createdAt ? new Date(post.createdAt).toISOString() : new Date().toISOString())
-      xml += `  <url>\n    <loc>${baseUrl}/post/${post.slug}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`
+      if (post.slug) {
+        const lastmod = post.updatedAt ? new Date(post.updatedAt).toISOString() : (post.createdAt ? new Date(post.createdAt).toISOString() : new Date().toISOString())
+        xml += `  <url>\n    <loc>${baseUrl}/post/${encodeURI(post.slug)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.9</priority>\n  </url>\n`
+      }
     })
 
     xml += `</urlset>`
 
-    res.header("Content-Type", "application/xml")
+    res.header("Content-Type", "application/xml; charset=utf-8")
     res.status(200).send(xml)
   } catch (error) {
     next(error)
@@ -124,27 +131,88 @@ export const generateNewsSitemap = async (req, res, next) => {
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">\n`
 
     posts.forEach((post) => {
-      const pubDate = post.createdAt ? new Date(post.createdAt).toISOString() : new Date().toISOString()
-      const title = (post.title || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;")
-      const lang = post.language === "hindi" ? "hi" : "en"
+      if (post.slug) {
+        const pubDate = post.createdAt ? new Date(post.createdAt).toISOString() : new Date().toISOString()
+        const title = (post.title || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;")
+        const lang = post.language === "hindi" ? "hi" : "en"
 
-      xml += `  <url>\n`
-      xml += `    <loc>${baseUrl}/post/${post.slug}</loc>\n`
-      xml += `    <news:news>\n`
-      xml += `      <news:publication>\n`
-      xml += `        <news:name>Newpulse</news:name>\n`
-      xml += `        <news:language>${lang}</news:language>\n`
-      xml += `      </news:publication>\n`
-      xml += `      <news:publication_date>${pubDate}</news:publication_date>\n`
-      xml += `      <news:title>${title}</news:title>\n`
-      xml += `    </news:news>\n`
-      xml += `  </url>\n`
+        xml += `  <url>\n`
+        xml += `    <loc>${baseUrl}/post/${encodeURI(post.slug)}</loc>\n`
+        xml += `    <news:news>\n`
+        xml += `      <news:publication>\n`
+        xml += `        <news:name>Newpulse</news:name>\n`
+        xml += `        <news:language>${lang}</news:language>\n`
+        xml += `      </news:publication>\n`
+        xml += `      <news:publication_date>${pubDate}</news:publication_date>\n`
+        xml += `      <news:title>${title}</news:title>\n`
+        xml += `    </news:news>\n`
+        xml += `  </url>\n`
+      }
     })
 
     xml += `</urlset>`
 
-    res.header("Content-Type", "application/xml")
+    res.header("Content-Type", "application/xml; charset=utf-8")
     res.status(200).send(xml)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const generateRssFeed = async (req, res, next) => {
+  try {
+    const baseUrl = "https://newpulse.in"
+    const posts = await Post.find({ status: "approved" })
+      .select("title slug content metaDescription image category createdAt updatedAt")
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .lean()
+
+    const buildDate = new Date().toUTCString()
+
+    let rss = `<?xml version="1.0" encoding="UTF-8"?>\n`
+    rss += `<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">\n`
+    rss += `  <channel>\n`
+    rss += `    <title>Newpulse - Latest News, Breaking News &amp; Live Updates</title>\n`
+    rss += `    <link>${baseUrl}</link>\n`
+    rss += `    <description>Newpulse delivers real-time breaking news headlines, in-depth political coverage, cricket &amp; sports updates, business analysis, and world news.</description>\n`
+    rss += `    <language>en-in</language>\n`
+    rss += `    <lastBuildDate>${buildDate}</lastBuildDate>\n`
+    rss += `    <atom:link href="${baseUrl}/rss.xml" rel="self" type="application/rss+xml"/>\n`
+    rss += `    <image>\n`
+    rss += `      <url>${baseUrl}/rectangular-logo.png</url>\n`
+    rss += `      <title>Newpulse</title>\n`
+    rss += `      <link>${baseUrl}</link>\n`
+    rss += `    </image>\n`
+
+    posts.forEach((post) => {
+      if (post.slug) {
+        const itemUrl = `${baseUrl}/post/${encodeURI(post.slug)}`
+        const pubDate = post.createdAt ? new Date(post.createdAt).toUTCString() : buildDate
+        const title = (post.title || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;")
+        const desc = post.metaDescription || (post.content ? post.content.replace(/<[^>]+>/g, " ").slice(0, 200) : "")
+        const cleanDesc = desc.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;")
+
+        rss += `    <item>\n`
+        rss += `      <title>${title}</title>\n`
+        rss += `      <link>${itemUrl}</link>\n`
+        rss += `      <guid isPermaLink="true">${itemUrl}</guid>\n`
+        rss += `      <pubDate>${pubDate}</pubDate>\n`
+        rss += `      <description>${cleanDesc}</description>\n`
+        rss += `      <category>${post.category || "News"}</category>\n`
+        if (post.image) {
+          rss += `      <enclosure url="${post.image}" type="image/jpeg" length="12345" />\n`
+          rss += `      <media:content url="${post.image}" medium="image" />\n`
+        }
+        rss += `    </item>\n`
+      }
+    })
+
+    rss += `  </channel>\n`
+    rss += `</rss>`
+
+    res.header("Content-Type", "application/xml; charset=utf-8")
+    res.status(200).send(rss)
   } catch (error) {
     next(error)
   }
