@@ -101,3 +101,53 @@ export const generateSitemap = async (req, res, next) => {
   }
 }
 
+export const generateNewsSitemap = async (req, res, next) => {
+  try {
+    const baseUrl = "https://newpulse.in"
+    const twoDaysAgo = new Date(Date.now() - 48 * 60 * 60 * 1000)
+
+    // Fetch approved posts from last 48 hours, or fallback to the latest 50 posts
+    let posts = await Post.find({
+      status: "approved",
+      createdAt: { $gte: twoDaysAgo }
+    }).select("title slug language createdAt updatedAt").sort({ createdAt: -1 }).lean()
+
+    if (!posts || posts.length === 0) {
+      posts = await Post.find({ status: "approved" })
+        .select("title slug language createdAt updatedAt")
+        .sort({ createdAt: -1 })
+        .limit(50)
+        .lean()
+    }
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">\n`
+
+    posts.forEach((post) => {
+      const pubDate = post.createdAt ? new Date(post.createdAt).toISOString() : new Date().toISOString()
+      const title = (post.title || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;")
+      const lang = post.language === "hindi" ? "hi" : "en"
+
+      xml += `  <url>\n`
+      xml += `    <loc>${baseUrl}/post/${post.slug}</loc>\n`
+      xml += `    <news:news>\n`
+      xml += `      <news:publication>\n`
+      xml += `        <news:name>Newpulse</news:name>\n`
+      xml += `        <news:language>${lang}</news:language>\n`
+      xml += `      </news:publication>\n`
+      xml += `      <news:publication_date>${pubDate}</news:publication_date>\n`
+      xml += `      <news:title>${title}</news:title>\n`
+      xml += `    </news:news>\n`
+      xml += `  </url>\n`
+    })
+
+    xml += `</urlset>`
+
+    res.header("Content-Type", "application/xml")
+    res.status(200).send(xml)
+  } catch (error) {
+    next(error)
+  }
+}
+
+

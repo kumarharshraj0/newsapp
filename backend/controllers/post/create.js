@@ -7,21 +7,23 @@ export const create = async (req, res, next) => {
     return next(errorHandler(400, "Please provide all the required fields!"))
   }
 
-  let slug = req.body.slug
-    ? req.body.slug
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-zA-Z0-9\u0900-\u097F-]/g, "")
-    : req.body.title
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-zA-Z0-9\u0900-\u097F-]/g, "")
+  const sanitizeSlug = (raw) => {
+    if (!raw) return `article-${Date.now()}`
+    let clean = raw
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9\u0900-\u097F\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-+|-+$/g, "")
 
-  if (!slug || slug === "-") {
-    slug = `article-${Date.now()}`
+    if (!clean || clean.length < 2) {
+      clean = `article-${Date.now()}`
+    }
+    return clean
   }
+
+  const slug = sanitizeSlug(req.body.slug || req.body.title)
 
   const status = req.user.isAdmin ? "approved" : "pending"
 

@@ -99,9 +99,10 @@ app.use("/api/page", pageRoutes)
 app.use("/api/seo", seoRoutes)
 app.use("/api/settings", settingRoutes)
 
-// Serve dynamic sitemap.xml directly at root domain (https://newpulse.in/sitemap.xml)
-import { generateSitemap } from "./controllers/seo.controller.js"
+// Serve dynamic sitemaps directly at root domain (https://newpulse.in/sitemap.xml & /news-sitemap.xml)
+import { generateSitemap, generateNewsSitemap } from "./controllers/seo.controller.js"
 app.get("/sitemap.xml", generateSitemap)
+app.get("/news-sitemap.xml", generateNewsSitemap)
 
 // --- Server-Side SEO Injection for Dynamic Routes (Production/Sharing) ---
 const __dirname = path.resolve()
@@ -115,6 +116,7 @@ app.use(express.static(path.join(__dirname, "../frontend/dist"), { index: false 
 import { injectArticleMeta } from "./utils/seoInjector.js"
 
 app.get("/post/:postSlug", injectArticleMeta)
+app.get("/page/:slug", injectArticleMeta)
 app.get("/news/:category/article/:postSlug", injectArticleMeta)
 app.get("/news/:category/:subcategory/article/:postSlug", injectArticleMeta)
 

@@ -1,6 +1,7 @@
 import path from "path"
 import fs from "fs"
 import Post from "../models/post.model.js"
+import Page from "../models/page.model.js"
 import User from "../models/user.model.js"
 
 const __dirname = path.resolve()
@@ -41,8 +42,7 @@ export const injectArticleMeta = async (req, res, next) => {
       slug === "search" ||
       slug === "sign-in" ||
       slug === "sign-up" ||
-      slug === "dashboard" ||
-      slug === "about"
+      slug === "dashboard"
     ) {
       return next()
     }
@@ -59,16 +59,31 @@ export const injectArticleMeta = async (req, res, next) => {
 
     let html = fs.readFileSync(indexPath, "utf-8")
 
-    // 2. Fetch the article document from MongoDB
-    const post = await Post.findOne({ slug })
-    if (!post) {
-      // Article not found, let frontend handle 404 or SPA route
+    // 2. Fetch the article or page document from MongoDB
+    let post = null
+    let page = null
+    let isPage = false
+
+    if (req.path.startsWith("/page/")) {
+      page = await Page.findOne({ slug })
+      isPage = true
+    } else {
+      post = await Post.findOne({ slug })
+      if (!post) {
+        page = await Page.findOne({ slug })
+        if (page) isPage = true
+      }
+    }
+
+    const item = post || page
+    if (!item) {
+      // Not found, let frontend handle 404 or SPA route
       return res.send(html)
     }
 
     // Fetch Author info
     let authorName = "Newpulse Editorial Team"
-    if (post.userId) {
+    if (post && post.userId) {
       try {
         const user = await User.findById(post.userId).select("username")
         if (user && user.username) {
@@ -79,19 +94,22 @@ export const injectArticleMeta = async (req, res, next) => {
       }
     }
 
-    const title = post.metaTitle || post.title || ""
-    const description = post.metaDescription || post.seoDescription || ""
-    const keywords = post.keywords || ""
-    const canonicalUrl = post.canonicalUrl || ""
-    const metaRobots = post.metaRobots || "index, follow, max-image-preview:large"
-    const image = post.image || ""
-    const imageAlt = post.imageAlt || title
-    const schemaScript = post.schemaScript
-      ? post.schemaScript.replace(/<\/?script[^>]*>/gi, "").trim()
+    const title = item.metaTitle || item.title || ""
+    const description = item.metaDescription || item.seoDescription || ""
+    const keywords = item.keywords || ""
+    const defaultCanonical = isPage
+      ? `https://newpulse.in/page/${item.slug || slug}`
+      : `https://newpulse.in/post/${item.slug || slug}`
+    const canonicalUrl = item.canonicalUrl || defaultCanonical
+    const metaRobots = item.metaRobots || "index, follow, max-image-preview:large"
+    const image = item.ogImage || item.image || ""
+    const imageAlt = item.imageAlt || title
+    const schemaScript = item.schemaScript
+      ? item.schemaScript.replace(/<\/?script[^>]*>/gi, "").trim()
       : ""
-    const publishedTime = post.createdAt ? new Date(post.createdAt).toISOString() : ""
-    const modifiedTime = post.updatedAt ? new Date(post.updatedAt).toISOString() : ""
-    const category = post.category || ""
+    const publishedTime = item.createdAt ? new Date(item.createdAt).toISOString() : ""
+    const modifiedTime = item.updatedAt ? new Date(item.updatedAt).toISOString() : ""
+    const category = item.category || ""
 
     // 3. Remove existing meta/OG/Twitter/title tags and existing schemas to avoid duplicates
     html = html
@@ -108,9 +126,9 @@ export const injectArticleMeta = async (req, res, next) => {
     // 4. Build dynamic replacement tags from backend admin fields
     let dynamicTags = `\n    <!-- Dynamic Meta Tags from Backend Admin -->`
     if (title) {
-      dynamicTags += `\n    <title>${escapeHtml(title)}</title>`
-      dynamicTags += `\n    <meta property="og:title" content="${escapeHtml(title)}" />`
-      dynamicTags += `\n    <meta name="twitter:title" content="${escapeHtml(title)}" />`
+      dynamicTags += `\n    <title>${escapeHtml(title)} | Newpulse</title>`
+      dynamicTags += `\n    <meta property="og:title" content="${escapeHtml(title)} | Newpulse" />`
+      dynamicTags += `\n    <meta name="twitter:title" content="${escapeHtml(title)} | Newpulse" />`
     }
     if (metaRobots) {
       dynamicTags += `\n    <meta name="robots" content="${escapeHtml(metaRobots)}" />`
@@ -127,6 +145,7 @@ export const injectArticleMeta = async (req, res, next) => {
       dynamicTags += `\n    <link rel="canonical" href="${canonicalUrl}" />`
       dynamicTags += `\n    <meta property="og:url" content="${canonicalUrl}" />`
     }
+    dynamicTags += `\n    <meta property="og:site_name" content="Newpulse" />`
     if (image) {
       let ogImage = image
       if (ogImage.includes("res.cloudinary.com")) {
@@ -149,24 +168,126 @@ export const injectArticleMeta = async (req, res, next) => {
       dynamicTags += `\n    <meta name="twitter:image" content="${ogImage}" />`
       dynamicTags += `\n    <meta name="twitter:card" content="summary_large_image" />`
     }
-    dynamicTags += `\n    <meta property="og:type" content="article" />`
-    if (publishedTime) {
-      dynamicTags += `\n    <meta property="article:published_time" content="${publishedTime}" />`
+    dynamicTags += `\n    <meta property="og:type" content="${isPage ? "website" : "article"}" />`
+    if (!isPage) {
+      if (publishedTime) {
+        dynamicTags += `\n    <meta property="article:published_time" content="${publishedTime}" />`
+      }
+      if (modifiedTime) {
+        dynamicTags += `\n    <meta property="article:modified_time" content="${modifiedTime}" />`
+      }
+      if (category) {
+        dynamicTags += `\n    <meta property="article:section" content="${escapeHtml(category)}" />`
+      }
+      if (post && post.tags && Array.isArray(post.tags)) {
+        post.tags.forEach((tag) => {
+          dynamicTags += `\n    <meta property="article:tag" content="${escapeHtml(tag)}" />`
+        })
+      }
     }
-    if (modifiedTime) {
-      dynamicTags += `\n    <meta property="article:modified_time" content="${modifiedTime}" />`
-    }
-    if (category) {
-      dynamicTags += `\n    <meta property="article:section" content="${escapeHtml(category)}" />`
-    }
-    if (post.tags && Array.isArray(post.tags)) {
-      post.tags.forEach((tag) => {
-        dynamicTags += `\n    <meta property="article:tag" content="${escapeHtml(tag)}" />`
-      })
-    }
+    
+    // Auto Schema if not provided manually
+    const autoNewsSchema = isPage
+      ? {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "@id": canonicalUrl,
+          "name": title,
+          "headline": title,
+          "description": description,
+          "image": image ? [image] : ["https://newpulse.in/banner.png"],
+          "datePublished": publishedTime || new Date().toISOString(),
+          "dateModified": modifiedTime || publishedTime || new Date().toISOString(),
+          "publisher": {
+            "@type": "NewsMediaOrganization",
+            "name": "Newpulse",
+            "url": "https://newpulse.in",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://newpulse.in/logo.svg"
+            }
+          }
+        }
+      : {
+          "@context": "https://schema.org",
+          "@type": "NewsArticle",
+          "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": canonicalUrl
+          },
+          "headline": title,
+          "description": description,
+          "image": image ? [image] : ["https://newpulse.in/logo.svg"],
+          "datePublished": publishedTime || new Date().toISOString(),
+          "dateModified": modifiedTime || publishedTime || new Date().toISOString(),
+          "author": [{
+            "@type": "Person",
+            "name": authorName,
+            "url": post && post.userId ? `https://newpulse.in/publisher/${post.userId}` : "https://newpulse.in"
+          }],
+          "publisher": {
+            "@type": "NewsMediaOrganization",
+            "name": "Newpulse",
+            "url": "https://newpulse.in",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://newpulse.in/logo.svg"
+            }
+          },
+          "articleSection": category || "News",
+          "keywords": keywords
+        }
+
+    const breadcrumbSchema = isPage
+      ? {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://newpulse.in"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": title,
+              "item": canonicalUrl
+            }
+          ]
+        }
+      : {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://newpulse.in"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": category || "News",
+              "item": `https://newpulse.in/news/${category || "all"}`
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": title,
+              "item": canonicalUrl
+            }
+          ]
+        }
+
     if (schemaScript) {
       dynamicTags += `\n    <script type="application/ld+json">\n${schemaScript}\n    </script>`
+    } else {
+      dynamicTags += `\n    <script type="application/ld+json">\n${JSON.stringify(autoNewsSchema)}\n    </script>`
     }
+    dynamicTags += `\n    <script type="application/ld+json">\n${JSON.stringify(breadcrumbSchema)}\n    </script>`
 
     // Inject before </head>
     html = html.replace("</head>", `${dynamicTags}\n  </head>`)

@@ -27,11 +27,17 @@ export const updatepost = async (req, res, next) => {
     }
 
     if (req.body.slug) {
-      updateFields.slug = req.body.slug
+      let clean = req.body.slug
         .trim()
         .toLowerCase()
+        .replace(/[^a-zA-Z0-9\u0900-\u097F\s-]/g, "")
         .replace(/\s+/g, "-")
-        .replace(/[^a-zA-Z0-9\u0900-\u097F-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-+|-+$/g, "")
+
+      if (clean && clean.length >= 2) {
+        updateFields.slug = clean
+      }
     }
 
     const updatedPost = await Post.findByIdAndUpdate(

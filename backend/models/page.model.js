@@ -32,6 +32,18 @@ const pageSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    metaRobots: {
+      type: String,
+      default: "index, follow, max-image-preview:large",
+    },
+    schemaScript: {
+      type: String,
+      default: "",
+    },
+    ogImage: {
+      type: String,
+      default: "",
+    },
     isActive: {
       type: Boolean,
       default: true,
