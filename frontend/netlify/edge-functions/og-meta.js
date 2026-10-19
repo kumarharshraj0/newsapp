@@ -108,17 +108,17 @@ export default async function handler(request, context) {
 
     // Replace <title>
     if (cleanTitle) {
-      html = html.replace(/<title>.*?<\/title>/i, `<title>${cleanTitle} | Newpulse</title>`);
+      html = html.replace(/<title[^>]*>[\s\S]*?<\/title>/i, `<title>${cleanTitle} | Newpulse</title>`);
     }
 
-    // Remove any hardcoded default og and twitter meta tags, descriptions, robots, and schemas to avoid duplicates
-    html = html.replace(/<meta\s+property=["']og:[^"']*["'][^>]*>/gi, "");
-    html = html.replace(/<meta\s+name=["']twitter:[^"']*["'][^>]*>/gi, "");
-    html = html.replace(/<meta\s+name=["']description["'][^>]*>/gi, "");
-    html = html.replace(/<meta\s+name=["']robots["'][^>]*>/gi, "");
-    html = html.replace(/<meta\s+name=["']keywords["'][^>]*>/gi, "");
-    html = html.replace(/<link\s+rel=["']canonical["'][^>]*>/gi, "");
-    html = html.replace(/<script\s+type=["']application\/ld\+json["'][\s\S]*?<\/script>/gi, "");
+    // Remove any hardcoded default og and twitter meta tags, descriptions, robots, keywords, canonical, and schemas to avoid duplicates
+    html = html.replace(/<meta[^>]*property=["']og:[^"']*["'][^>]*>\s*/gi, "");
+    html = html.replace(/<meta[^>]*name=["']twitter:[^"']*["'][^>]*>\s*/gi, "");
+    html = html.replace(/<meta[^>]*name=["']description["'][^>]*>\s*/gi, "");
+    html = html.replace(/<meta[^>]*name=["']robots["'][^>]*>\s*/gi, "");
+    html = html.replace(/<meta[^>]*name=["']keywords["'][^>]*>\s*/gi, "");
+    html = html.replace(/<link[^>]*rel=["']canonical["'][^>]*>\s*/gi, "");
+    html = html.replace(/<script\s+type=["']application\/ld\+json["'][\s\S]*?<\/script>\s*/gi, "");
 
     // Inject exact article/page Open Graph & Twitter meta tags from backend admin
     let newMetaTags = `\n    <!-- Dynamic Meta Tags from Backend Admin -->`;
